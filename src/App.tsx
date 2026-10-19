@@ -25,14 +25,22 @@ const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    if (hash) {
-      const element = document.querySelector(hash);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-        return;
+    if (hash && hash !== '#' && hash.length > 1) {
+      try {
+        const element = document.querySelector(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+      } catch {
+        // Ignore invalid selector in hash
       }
     }
-    window.scrollTo({ top: 0, behavior: 'instant' as any });
+    try {
+      window.scrollTo({ top: 0, behavior: 'instant' as any });
+    } catch {
+      window.scrollTo(0, 0);
+    }
 
     // Ensure ScrollTrigger recalculates trigger positions on new page DOM
     const timer = setTimeout(() => {

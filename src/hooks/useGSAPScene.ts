@@ -20,11 +20,19 @@ export function useGSAPScene(
 
     // Create GSAP context scoped to current component container
     const ctx = gsap.context(() => {
-      callbackRef.current(ctx);
+      try {
+        callbackRef.current(ctx);
+      } catch (err) {
+        console.warn('GSAP animation scene execution error caught:', err);
+      }
     }, scopeRef.current);
 
     return () => {
-      ctx.revert(); // Cleans up all timelines and ScrollTriggers created in context
+      try {
+        ctx.revert(); // Cleans up all timelines and ScrollTriggers created in context
+      } catch (err) {
+        console.warn('GSAP revert error caught:', err);
+      }
     };
   }, [reducedMotion, ...deps]);
 }
