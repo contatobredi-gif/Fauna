@@ -5,12 +5,9 @@ import { COURSES_DATA, Course } from '../../data/content';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { gsap } from '../../utils/motionConfig';
+import { EnrollmentCta } from '../ui/EnrollmentCta';
 
-interface Props {
-  onOpenInterest: (courseId?: string) => void;
-}
-
-export const Scene04Formation: React.FC<Props> = ({ onOpenInterest }) => {
+export const Scene04Formation: React.FC = () => {
   const [filter, setFilter] = useState<'Todos' | 'Graduação' | 'Pós-graduação'>('Todos');
   const [selectedArea, setSelectedArea] = useState<string>('Todas');
   const [featuredCourseIndex, setFeaturedCourseIndex] = useState<number>(0);
@@ -126,13 +123,13 @@ export const Scene04Formation: React.FC<Props> = ({ onOpenInterest }) => {
               </div>
 
               <div className="lg:col-span-4 flex flex-col justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => onOpenInterest(featuredCourse.id)}
+                <EnrollmentCta
+                  kind={featuredCourse.type === 'Pós-graduação' ? 'pos' : 'graduacao'}
+                  courseId={featuredCourse.id}
                   className="w-full py-3.5 px-5 bg-[#123524] hover:bg-[#0A1F15] text-[#FAF8F5] text-xs font-semibold rounded-xl transition-all shadow-sm text-center"
                 >
-                  Manifestar Interesse neste Curso
-                </button>
+                  Inscrever-se neste curso
+                </EnrollmentCta>
                 <Link
                   to="/cursos"
                   className="w-full py-3.5 px-5 bg-[#FAF5EE] hover:bg-[#F2ECE1] text-[#123524] text-xs font-semibold rounded-xl border border-[#E5DFD3] transition-all text-center flex items-center justify-center gap-1.5"
@@ -234,16 +231,13 @@ export const Scene04Formation: React.FC<Props> = ({ onOpenInterest }) => {
                   <span className="text-[11px] font-semibold text-[#8A6D3B] hover:underline">
                     {isSelected ? '✓ Selecionado acima' : 'Clique para explorar'}
                   </span>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onOpenInterest(c.id);
-                    }}
-                    className="px-3 py-1.5 bg-[#123524] text-white text-xs rounded-lg hover:bg-[#0A1F15]"
+                  <EnrollmentCta
+                    kind={c.type === 'Pós-graduação' ? 'pos' : 'graduacao'}
+                    courseId={c.id}
+                    className="px-3 py-1.5 bg-[#123524] text-white text-xs rounded-lg hover:bg-[#0A1F15] text-center"
                   >
-                    Interesse
-                  </button>
+                    Inscrever-se
+                  </EnrollmentCta>
                 </div>
               </div>
             );

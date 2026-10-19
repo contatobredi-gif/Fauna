@@ -1,24 +1,35 @@
-import React, { useState } from 'react';
-import { ShieldCheck, BookOpen, Clock, Award, FileText, CheckCircle2, ChevronRight, Download, Users, Compass } from 'lucide-react';
+import React from 'react';
+import { FileText, Compass } from 'lucide-react';
 import { TIMELINE_HISTORY } from '../data/content';
 import { ValidationNotice } from '../components/ui/ValidationNotice';
+import { useHashTab } from '../hooks/useHashTab';
+
+type InstitucionalTab = 'historia' | 'saber-mais' | 'cpa' | 'lgpd' | 'editais';
+
+const INSTITUCIONAL_TABS: { tab: InstitucionalTab; hashes: string[]; label: string }[] = [
+  { tab: 'historia', hashes: ['quem-somos', 'nossa-historia'], label: 'Quem Somos & Trajetória' },
+  { tab: 'saber-mais', hashes: ['metodo-saber-mais', 'saber-mais'], label: 'Método Saber Mais' },
+  { tab: 'cpa', hashes: ['cpa'], label: 'CPA — Autoavaliação' },
+  { tab: 'lgpd', hashes: ['lgpd'], label: 'LGPD & Privacidade' },
+  { tab: 'editais', hashes: ['editais', 'regimento', 'regulamentos', 'normas'], label: 'Editais & Regimento' },
+];
 
 export const InstitucionalPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'historia' | 'saber-mais' | 'cpa' | 'lgpd' | 'editais'>('historia');
+  const { activeTab, setActiveTab } = useHashTab<InstitucionalTab>(INSTITUCIONAL_TABS, 'historia');
 
   const cpaReports = [
-    { title: 'Projeto de Aplicação da Autoavaliação Institucional 2025', date: '2025', status: 'Disponível' },
-    { title: 'Plano de Ação FAUNA 2025', date: '2025', status: 'Disponível' },
-    { title: 'Relatório Integral CPA 2024', date: '2024', status: 'Disponível' },
-    { title: 'Relatório CPA FAUNA 2023.2', date: '2023', status: 'Disponível' },
-    { title: 'Síntese Trienal CPA (2019-2021)', date: '2021', status: 'Disponível' }
+    { title: 'Projeto de Aplicação da Autoavaliação Institucional 2025', date: '2025', status: 'Arquivo digital em atualização' },
+    { title: 'Plano de Ação FAUNA 2025', date: '2025', status: 'Arquivo digital em atualização' },
+    { title: 'Relatório Integral CPA 2024', date: '2024', status: 'Arquivo digital em atualização' },
+    { title: 'Relatório CPA FAUNA 2023.2', date: '2023', status: 'Arquivo digital em atualização' },
+    { title: 'Síntese Trienal CPA (2019-2021)', date: '2021', status: 'Arquivo digital em atualização' }
   ];
 
   const editaisList = [
-    { title: 'Edital do Processo Seletivo Vestibular — Polo Barcarena 2026.1', type: 'Vestibular', status: 'Em consolidação oficial' },
-    { title: 'Regimento Geral da Faculdade Universo da Amazônia', type: 'Institucional', status: 'Vigente' },
-    { title: 'Manual do Aluno e Guia de Convivência Acadêmica', type: 'Acadêmico', status: 'Vigente' },
-    { title: 'Regulamento das Atividades Complementares e Extensão', type: 'Extensão', status: 'Vigente' }
+    { id: 'editais', title: 'Edital do Processo Seletivo Vestibular — Polo Barcarena 2026.1', type: 'Vestibular', status: 'Publicação oficial em consolidação' },
+    { id: 'regimento', title: 'Regimento Geral da Faculdade Universo da Amazônia', type: 'Institucional', status: 'Arquivo digital em atualização' },
+    { id: 'normas', title: 'Manual do Aluno e Guia de Convivência Acadêmica', type: 'Normas e manuais', status: 'Arquivo digital em atualização' },
+    { id: 'regulamentos', title: 'Regulamento das Atividades Complementares e Extensão', type: 'Regulamentos e programas', status: 'Arquivo digital em atualização' }
   ];
 
   return (
@@ -45,18 +56,13 @@ export const InstitucionalPage: React.FC = () => {
       <div className="sticky top-[68px] z-30 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E5DFD3] shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 overflow-x-auto py-3 no-scrollbar text-xs font-medium">
-            {[
-              { id: 'historia', label: 'Quem Somos & Trajetória' },
-              { id: 'saber-mais', label: 'Método Saber Mais' },
-              { id: 'cpa', label: 'CPA — Autoavaliação' },
-              { id: 'lgpd', label: 'LGPD & Privacidade' },
-              { id: 'editais', label: 'Editais & Regimento' }
-            ].map((tab) => (
+            {INSTITUCIONAL_TABS.map((tab) => (
               <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                key={tab.tab}
+                type="button"
+                onClick={() => setActiveTab(tab.tab)}
                 className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors shrink-0 ${
-                  activeTab === tab.id
+                  activeTab === tab.tab
                     ? 'bg-[#123524] text-white font-semibold'
                     : 'text-[#57685F] hover:text-[#123524] hover:bg-[#F2ECE1]'
                 }`}
@@ -75,7 +81,7 @@ export const InstitucionalPage: React.FC = () => {
         {activeTab === 'historia' && (
           <div className="space-y-16 animate-fade-in">
             {/* Mensagem do Diretor (Texto Oficial da Referência B) */}
-            <div className="bg-white rounded-3xl border border-[#E5DFD3] p-8 sm:p-12 shadow-xs">
+            <div id="quem-somos" className="bg-white rounded-3xl border border-[#E5DFD3] p-8 sm:p-12 shadow-xs scroll-mt-28">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
                 <div className="lg:col-span-8 space-y-5 text-[#47574E] text-sm leading-relaxed">
                   <span className="text-xs font-mono uppercase tracking-widest text-[#8A6D3B] block">
@@ -120,7 +126,7 @@ export const InstitucionalPage: React.FC = () => {
             </div>
 
             {/* Linha do Tempo Histórica */}
-            <div>
+            <div id="nossa-historia" className="scroll-mt-28">
               <div className="max-w-2xl mb-8">
                 <span className="text-xs font-mono uppercase tracking-widest text-[#8A6D3B] block mb-2">
                   NOSSA TRAJETÓRIA
@@ -152,7 +158,7 @@ export const InstitucionalPage: React.FC = () => {
         {/* TAB 2: MÉTODO SABER MAIS */}
         {activeTab === 'saber-mais' && (
           <div className="space-y-12 animate-fade-in">
-            <div className="bg-white rounded-3xl border border-[#E5DFD3] p-8 sm:p-12 shadow-xs space-y-6">
+            <div id="metodo-saber-mais" className="bg-white rounded-3xl border border-[#E5DFD3] p-8 sm:p-12 shadow-xs space-y-6 scroll-mt-28">
               <span className="text-xs font-mono uppercase tracking-widest text-[#8A6D3B] block">
                 METODOLOGIA PEDAGÓGICA PROPRIETÁRIA
               </span>
@@ -202,7 +208,7 @@ export const InstitucionalPage: React.FC = () => {
         {/* TAB 3: CPA AUTOAVALIAÇÃO */}
         {activeTab === 'cpa' && (
           <div className="space-y-10 animate-fade-in">
-            <div className="bg-white rounded-3xl border border-[#E5DFD3] p-8 sm:p-12 shadow-xs space-y-6">
+            <div id="cpa" className="bg-white rounded-3xl border border-[#E5DFD3] p-8 sm:p-12 shadow-xs space-y-6 scroll-mt-28">
               <span className="text-xs font-mono uppercase tracking-widest text-[#8A6D3B] block">
                 SINAES · MINISTÉRIO DA EDUCAÇÃO
               </span>
@@ -248,7 +254,7 @@ export const InstitucionalPage: React.FC = () => {
         {/* TAB 4: LGPD */}
         {activeTab === 'lgpd' && (
           <div className="space-y-10 animate-fade-in">
-            <div className="bg-white rounded-3xl border border-[#E5DFD3] p-8 sm:p-12 shadow-xs space-y-6">
+            <div id="lgpd" className="bg-white rounded-3xl border border-[#E5DFD3] p-8 sm:p-12 shadow-xs space-y-6 scroll-mt-28">
               <span className="text-xs font-mono uppercase tracking-widest text-[#8A6D3B] block">
                 LEI Nº 13.709/2018
               </span>
@@ -289,7 +295,7 @@ export const InstitucionalPage: React.FC = () => {
 
               <div className="divide-y divide-[#EDE6D8] border border-[#E5DFD3] rounded-2xl overflow-hidden bg-[#FAF8F5]">
                 {editaisList.map((ed) => (
-                  <div key={ed.title} className="p-4.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white transition-colors">
+                  <div key={ed.title} id={ed.id} className="p-4.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white transition-colors scroll-mt-28">
                     <div className="flex items-center gap-3">
                       <FileText className="w-5 h-5 text-[#123524] shrink-0" />
                       <div>

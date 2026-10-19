@@ -1,32 +1,62 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Clock, MapPin, CheckCircle2, AlertCircle, ArrowRight, BookOpen, GraduationCap } from 'lucide-react';
+import { Search, Clock, MapPin, AlertCircle, BookOpen, GraduationCap } from 'lucide-react';
 import { COURSES_DATA, Course } from '../data/content';
 import { ValidationNotice } from '../components/ui/ValidationNotice';
+import { EnrollmentCta } from '../components/ui/EnrollmentCta';
+import { useAlignedHashScroll } from '../hooks/useHashTab';
+import type { EnrollmentKind } from '../config/externalLinks';
 
-interface Props {
-  onOpenInterest: (courseId?: string) => void;
+const TYPE_OPTIONS = ['Todos', 'Graduação', 'Pós-graduação', 'Extensão'] as const;
+
+function typeFromQuery(tipo: string | null): (typeof TYPE_OPTIONS)[number] {
+  if (tipo === 'pos') return 'Pós-graduação';
+  if (tipo === 'extensao') return 'Extensão';
+  if (tipo === 'graduacao') return 'Graduação';
+  return 'Todos';
 }
 
-export const CursosPage: React.FC<Props> = ({ onOpenInterest }) => {
-  const [searchParams] = useSearchParams();
-  const initialType = searchParams.get('tipo') === 'pos' ? 'Pós-graduação' : searchParams.get('tipo') === 'extensao' ? 'Extensão' : 'Todos';
+function queryFromType(type: string): string | null {
+  if (type === 'Pós-graduação') return 'pos';
+  if (type === 'Extensão') return 'extensao';
+  if (type === 'Graduação') return 'graduacao';
+  return null;
+}
 
-  const [typeFilter, setTypeFilter] = useState<string>(initialType);
+function enrollmentKindForCourse(course: Course): EnrollmentKind {
+  if (course.type === 'Pós-graduação') return 'pos';
+  if (course.type === 'Extensão') return 'extensao';
+  return 'graduacao';
+}
+
+export const CursosPage: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const typeFilter = typeFromQuery(searchParams.get('tipo'));
   const [areaFilter, setAreaFilter] = useState<string>('Todas');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
+  useAlignedHashScroll();
+
+  const setTypeFilter = (type: string) => {
+    const next = new URLSearchParams(searchParams);
+    const query = queryFromType(type);
+    if (query) next.set('tipo', query);
+    else next.delete('tipo');
+    setSearchParams(next);
+  };
+
   const filteredCourses = COURSES_DATA.filter((c) => {
     const matchesType = typeFilter === 'Todos' || c.type === typeFilter;
     const matchesArea = areaFilter === 'Todas' || c.area === areaFilter;
-    const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesType && matchesArea && matchesSearch;
   });
 
   return (
     <div className="pt-24 pb-28 bg-[#FAF8F5] text-[#1D2B24]">
-      {/* Page Header */}
       <section className="bg-[#123524] text-white py-16 lg:py-20 border-b border-[#1C4E36]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
@@ -44,21 +74,15 @@ export const CursosPage: React.FC<Props> = ({ onOpenInterest }) => {
         </div>
       </section>
 
-      {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
-        
-        {/* Notice of Barcarena Validation */}
         <div className="mb-8">
           <ValidationNotice
             text="A grade oficial com portarias do MEC para as turmas presenciais de Barcarena está em processo de divulgação regulatória. As opções abaixo representam as matrizes curriculares da instituição preparadas para a expansão."
           />
         </div>
 
-        {/* Filters and Search Bar */}
         <div className="bg-white p-6 rounded-2xl border border-[#E5DFD3] shadow-xs space-y-4 mb-10">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-            
-            {/* Search Input */}
             <div className="md:col-span-5 relative">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#7A8A82]" />
               <input
@@ -70,9 +94,8 @@ export const CursosPage: React.FC<Props> = ({ onOpenInterest }) => {
               />
             </div>
 
-            {/* Type Filter Buttons */}
             <div className="md:col-span-4 flex items-center gap-1.5 p-1 bg-[#FAF8F5] rounded-xl border border-[#E5DFD3] overflow-x-auto">
-              {['Todos', 'Graduação', 'Pós-graduação'].map((t) => (
+              {TYPE_OPTIONS.map((t) => (
                 <button
                   key={t}
                   type="button"
@@ -88,7 +111,6 @@ export const CursosPage: React.FC<Props> = ({ onOpenInterest }) => {
               ))}
             </div>
 
-            {/* Area Filter Selector */}
             <div className="md:col-span-3">
               <select
                 value={areaFilter}
@@ -104,7 +126,6 @@ export const CursosPage: React.FC<Props> = ({ onOpenInterest }) => {
           </div>
         </div>
 
-        {/* Courses Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCourses.map((c) => (
             <div
@@ -156,13 +177,13 @@ export const CursosPage: React.FC<Props> = ({ onOpenInterest }) => {
                 </div>
 
                 <div className="flex items-center justify-between gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => onOpenInterest(c.id)}
+                  <EnrollmentCta
+                    kind={enrollmentKindForCourse(c)}
+                    courseId={c.id}
                     className="flex-1 py-2.5 px-3 bg-[#123524] hover:bg-[#0A1F15] text-[#FAF8F5] text-xs font-semibold rounded-lg transition-colors text-center"
                   >
-                    Manifestar Interesse
-                  </button>
+                    Inscrever-se
+                  </EnrollmentCta>
                   <button
                     type="button"
                     onClick={() => setSelectedCourse(c)}
@@ -178,8 +199,18 @@ export const CursosPage: React.FC<Props> = ({ onOpenInterest }) => {
 
         {filteredCourses.length === 0 && (
           <div className="py-16 text-center bg-white rounded-2xl border border-[#E5DFD3] space-y-3">
-            <p className="text-base font-serif text-[#123524]">Nenhum curso encontrado com esses filtros.</p>
+            <p className="text-base font-serif text-[#123524]">
+              {typeFilter === 'Extensão'
+                ? 'A oferta de extensão universitária para Barcarena ainda está em estruturação.'
+                : 'Nenhum curso encontrado com esses filtros.'}
+            </p>
+            <p className="text-xs text-[#57685F] max-w-md mx-auto">
+              {typeFilter === 'Extensão'
+                ? 'Não publicamos turmas fictícias. Quando houver programação oficial, ela aparecerá nesta seção.'
+                : 'Ajuste a busca ou a área de conhecimento para ver as formações disponíveis no catálogo.'}
+            </p>
             <button
+              type="button"
               onClick={() => { setTypeFilter('Todos'); setAreaFilter('Todas'); setSearchQuery(''); }}
               className="text-xs text-[#C9A44C] underline font-medium"
             >
@@ -187,16 +218,14 @@ export const CursosPage: React.FC<Props> = ({ onOpenInterest }) => {
             </button>
           </div>
         )}
-
       </div>
 
-      {/* Course Details Modal */}
       {selectedCourse && (
-        <div 
+        <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
           onClick={() => setSelectedCourse(null)}
         >
-          <div 
+          <div
             className="relative w-full max-w-lg bg-[#FAF8F5] rounded-2xl border border-[#E5DFD3] shadow-2xl p-6 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
@@ -228,17 +257,13 @@ export const CursosPage: React.FC<Props> = ({ onOpenInterest }) => {
               >
                 Fechar
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const id = selectedCourse.id;
-                  setSelectedCourse(null);
-                  onOpenInterest(id);
-                }}
-                className="px-5 py-2.5 bg-[#123524] hover:bg-[#0A1F15] text-[#FAF8F5] text-xs font-semibold rounded-lg transition-colors"
+              <EnrollmentCta
+                kind={enrollmentKindForCourse(selectedCourse)}
+                courseId={selectedCourse.id}
+                className="px-5 py-2.5 bg-[#123524] hover:bg-[#0A1F15] text-[#FAF8F5] text-xs font-semibold rounded-lg transition-colors text-center"
               >
-                Inscrever-se / Manifestar Interesse
-              </button>
+                Inscrever-se
+              </EnrollmentCta>
             </div>
           </div>
         </div>

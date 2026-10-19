@@ -10,24 +10,19 @@ import { Scene08Experience } from '../components/sections/Scene08Experience';
 import { Scene09NewsEvents } from '../components/sections/Scene09NewsEvents';
 import { Scene10Conversion } from '../components/sections/Scene10Conversion';
 
-interface Props {
-  onOpenInterest: (courseId?: string) => void;
-}
-
-export const HomePage: React.FC<Props> = ({ onOpenInterest }) => {
+export const HomePage: React.FC = () => {
   return (
     <div className="flex flex-col">
-      {/* 10 Chapters of the FAUNA Digital Narrative */}
-      <Scene01Hero onOpenInterest={() => onOpenInterest()} />
+      <Scene01Hero />
       <Scene02Essence />
       <Scene03Manifesto />
-      <Scene04Formation onOpenInterest={onOpenInterest} />
+      <Scene04Formation />
       <Scene05Knowledge />
       <Scene06Barcarena />
       <Scene07Campus />
       <Scene08Experience />
       <Scene09NewsEvents />
-      <Scene10Conversion onOpenInterest={() => onOpenInterest()} />
+      <Scene10Conversion />
     </div>
   );
 };

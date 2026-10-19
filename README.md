@@ -13,6 +13,7 @@ A FAUNA 3.0 é um site institucional com:
 - páginas internas (institucional, cursos, ingresso, benefícios, vida acadêmica, notícias e contato)
 - conteúdo centralizado em arquivos de dados
 - animações com GSAP e ScrollTrigger
+- inscrições apenas por links externos configuráveis
 
 ## Stack
 
@@ -67,8 +68,9 @@ O servidor inicia em [http://localhost:3000](http://localhost:3000).
 ├── src/
 │   ├── assets/             # recursos auxiliares
 │   ├── components/         # layout, seções, animações e UI
-│   ├── data/               # conteúdo institucional e navegação
-│   ├── hooks/              # GSAP e preferência de movimento reduzido
+│   ├── config/             # links externos, redes sociais e contato
+│   ├── data/               # conteúdo institucional, navegação, docentes e eventos
+│   ├── hooks/              # GSAP, movimento reduzido e sincronização de abas
 │   ├── pages/              # páginas/rotas
 │   ├── utils/              # configuração de motion
 │   ├── App.tsx             # rotas principais
@@ -108,8 +110,38 @@ O arquivo `vercel.json` já redireciona rotas do React Router para `index.html`,
 
 Este site não exige variáveis de ambiente para o build atual.
 
-## Observações
+## Rotas
 
-- Formulários de interesse e contato ainda são somente da interface; os dados não são enviados a um serviço externo.
-- Parte do conteúdo institucional permanece marcada para validação do polo Barcarena.
+| Rota | Conteúdo |
+| --- | --- |
+| `/` | Homepage narrativa |
+| `/institucional` | A FAUNA (abas via hash) |
+| `/institucional/diretoria-docentes` | Diretoria e corpo docente |
+| `/cursos` | Catálogo (`?tipo=graduacao`, `pos`, `extensao`) |
+| `/como-ingressar` | Vestibular, ENEM, segunda graduação, transferência |
+| `/beneficios` | Programas institucionais (seções por hash) |
+| `/vida-academica` | Biblioteca, portais, Talentos S/A, LAB e documentos |
+| `/eventos` | Eventos e palestras |
+| `/noticias` | Notícias institucionais |
+| `/contato` | Canais oficiais, sem formulário |
+
+Hashes importantes: `#quem-somos`, `#metodo-saber-mais`, `#cpa`, `#lgpd`, `#editais`, `#enem`, `#fauna-experience`, `#biblioteca`.
+
+## Navegação e configuração
+
+- Menu principal: `src/data/navigation.ts`
+- Inscrições externas: `src/config/externalLinks.ts`
+- Redes sociais: `src/config/socialLinks.ts`
+- Contato: `src/config/contact.ts`
+- Diretoria e docentes: `src/data/faculty.ts`
+- Eventos: `src/data/events.ts`
+
+Enquanto as URLs oficiais de inscrição e redes sociais estiverem vazias, a interface mostra estado “em breve” ou “indisponível”, sem links inventados.
+
+## Observações e pendências de conteúdo
+
+- Não há formulário interno de inscrição ou contato.
+- O inventário de governança permanece em `src/data/content.ts` e no componente `ContentInventoryModal`, fora da navegação pública.
+- Corpo docente, eventos de Barcarena, portais, validador de diplomas, PDFs de editais/CPA, endereço e redes sociais aguardam dados oficiais.
+- Parte dos benefícios permanece marcada para validação do polo Barcarena.
 - Não misture `package-lock.json` com lockfiles de outros gerenciadores.

@@ -4,12 +4,9 @@ import { Link } from 'react-router-dom';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { gsap } from '../../utils/motionConfig';
+import { EnrollmentCta } from '../ui/EnrollmentCta';
 
-interface Props {
-  onOpenInterest: () => void;
-}
-
-export const Scene01Hero: React.FC<Props> = ({ onOpenInterest }) => {
+export const Scene01Hero: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const bgImageRef = useRef<HTMLImageElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -129,13 +126,12 @@ export const Scene01Hero: React.FC<Props> = ({ onOpenInterest }) => {
           ref={actionsRef}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto"
         >
-          <button
-            type="button"
-            onClick={onOpenInterest}
-            className="w-full sm:w-auto px-8 py-3.5 bg-[#C9A44C] hover:bg-[#D8B45E] text-[#123524] text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
+          <EnrollmentCta
+            kind="vestibular"
+            className="w-full sm:w-auto px-8 py-3.5 bg-[#C9A44C] hover:bg-[#D8B45E] text-[#123524] text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 text-center"
           >
             Processo Seletivo Barcarena
-          </button>
+          </EnrollmentCta>
           
           <Link
             to="/cursos"

@@ -1,13 +1,12 @@
 import React from 'react';
-import { Crown, Award, Users, HeartHandshake, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Sparkles, CheckCircle2 } from 'lucide-react';
 import { BENEFIT_PROGRAMS } from '../data/content';
 import { ValidationNotice } from '../components/ui/ValidationNotice';
+import { EnrollmentCta } from '../components/ui/EnrollmentCta';
+import { useAlignedHashScroll } from '../hooks/useHashTab';
 
-interface Props {
-  onOpenInterest: () => void;
-}
-
-export const BeneficiosPage: React.FC<Props> = ({ onOpenInterest }) => {
+export const BeneficiosPage: React.FC = () => {
+  useAlignedHashScroll();
   return (
     <div className="pt-24 pb-28 bg-[#FAF8F5] text-[#1D2B24]">
       {/* Header */}
@@ -112,13 +111,11 @@ export const BeneficiosPage: React.FC<Props> = ({ onOpenInterest }) => {
               Nossa equipe de orientação acadêmica pode auxiliar você no cálculo de descontos e opções de ingresso no polo Barcarena.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onOpenInterest}
-            className="px-6 py-3 bg-[#C9A44C] hover:bg-[#D8B45E] text-[#123524] text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0"
+          <EnrollmentCta
+            className="px-6 py-3 bg-[#C9A44C] hover:bg-[#D8B45E] text-[#123524] text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 text-center"
           >
-            Falar com a Equipe Acadêmica
-          </button>
+            Ir para inscrição
+          </EnrollmentCta>
         </div>
 
       </div>
