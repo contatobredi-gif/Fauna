@@ -38,7 +38,14 @@ const PortraitFrame: React.FC<{
       className={`relative overflow-hidden rounded-[1.75rem] border border-[#C9A44C]/35 bg-[#0A1F15] ${frameClass}`}
     >
       {showPhoto ? (
-        <img src={photo.src} alt={photo.alt ?? name} className="h-full w-full object-cover" />
+        <img
+          src={photo.src}
+          alt={photo.alt ?? name}
+          className="h-full w-full object-cover"
+          style={{ objectPosition: photo.objectPosition ?? 'center 20%' }}
+          loading={size === 'hero' ? 'eager' : 'lazy'}
+          decoding="async"
+        />
       ) : (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-[radial-gradient(circle_at_30%_20%,#1C4E36,transparent_55%),linear-gradient(165deg,#0A1F15_0%,#123524_55%,#06150E_100%)]">
           <span className="font-serif text-5xl sm:text-6xl font-normal text-[#E5C879] tracking-wide">
@@ -128,7 +135,7 @@ export const FacultyPage: React.FC = () => {
               Diretoria e Docentes
             </h1>
             <p className="text-sm font-light leading-relaxed text-[#B2C5BC] sm:text-base">
-              Apresentação da liderança da Faculdade Universo da Amazônia e estrutura pronta para o quadro oficial da unidade Barcarena. Coordenação e corpo docente só entram no ar com nomes, fotos autorizadas e vínculo aos cursos locais.
+              Liderança da Faculdade Universo da Amazônia e coordenações de graduação da unidade Barcarena. O corpo docente de cada curso será publicado quando a lista oficial for autorizada.
             </p>
           </div>
         </div>
@@ -174,7 +181,7 @@ export const FacultyPage: React.FC = () => {
             <SectionEyebrow>Coordenação acadêmica</SectionEyebrow>
             <h2 className="font-serif text-3xl font-bold text-[#123524]">Quem conduz os cursos da unidade</h2>
             <p className="mt-3 text-sm leading-relaxed text-[#57685F]">
-              A coordenação de Barcarena será publicada curso a curso, com fotografia, titulação e apresentação autorizadas. Equipes de outras unidades permanecem em acervo interno até confirmação.
+              Coordenações confirmadas para os cursos de graduação de Barcarena: Direito, Enfermagem e Psicologia. Titulações e Lattes só aparecem quando constam no material oficial.
             </p>
           </div>
 
@@ -203,7 +210,7 @@ export const FacultyPage: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
               {coordenacao.map((person) => (
                 <CoordinatorCard key={person.id} person={person} />
               ))}
@@ -239,10 +246,10 @@ export const FacultyPage: React.FC = () => {
             <div className="space-y-6">
               <PendingPanel title="Corpo docente em composição">
                 <p>
-                  A FAUNA 3.0 não cria nomes nem currículos para preencher a galeria. O acervo do site anterior não contém listagem de professores — apenas a Diretoria e três coordenações de outra unidade.
+                  A confirmação da Direção cobre a coordenação dos cursos de Direito, Enfermagem e Psicologia. Nomes de professores não são inventados para preencher a galeria.
                 </p>
                 <p>
-                  Quando a lista oficial de Barcarena chegar, os cards abaixo passam a agrupar fotografia, titulação, área, cursos vinculados e Lattes.
+                  Quando a lista oficial do corpo docente de Barcarena for autorizada, os cards abaixo agrupam fotografia, titulação, área, cursos vinculados e Lattes.
                 </p>
               </PendingPanel>
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -309,34 +316,53 @@ const DiretoriaFeature: React.FC<{ person: LeadershipProfile }> = ({ person }) =
   </article>
 );
 
-const CoordinatorCard: React.FC<{ person: CoordinatorProfile }> = ({ person }) => (
-  <article className="faculty-reveal flex flex-col overflow-hidden rounded-[1.5rem] border border-[#E5DFD3] bg-white">
-    <div className="p-4">
-      <PortraitFrame name={person.name} photo={person.photo} />
-    </div>
-    <div className="flex flex-1 flex-col space-y-2 px-5 pb-6">
-      <h3 className="font-serif text-xl font-bold text-[#123524]">{person.name}</h3>
-      <p className="text-[11px] uppercase tracking-[0.16em] text-[#8A6D3B]">{person.role}</p>
-      {(person.courseLabel || person.area) && (
-        <p className="text-xs text-[#57685F]">
-          {[person.courseLabel, person.area].filter(Boolean).join(' · ')}
-        </p>
-      )}
-      {person.title && <p className="text-xs text-[#47574E]">{person.title}</p>}
-      {person.presentation && <p className="text-sm leading-relaxed text-[#47574E]">{person.presentation}</p>}
-      {person.lattesUrl ? (
-        <a
-          href={person.lattesUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 pt-2 text-xs text-[#123524] underline"
-        >
-          Currículo Lattes <ExternalLink className="h-3 w-3" />
-        </a>
-      ) : null}
-    </div>
-  </article>
-);
+const CoordinatorCard: React.FC<{ person: CoordinatorProfile }> = ({ person }) => {
+  const [expanded, setExpanded] = useState(false);
+  const hasFullBio = Boolean(person.presentation);
+  const summary = person.presentationSummary ?? person.presentation;
+
+  return (
+    <article className="faculty-reveal flex flex-col overflow-hidden rounded-[1.5rem] border border-[#E5DFD3] bg-white">
+      <div className="p-4">
+        <PortraitFrame name={person.name} photo={person.photo} />
+      </div>
+      <div className="flex flex-1 flex-col space-y-2 px-5 pb-6">
+        <h3 className="font-serif text-xl font-bold text-[#123524]">{person.name}</h3>
+        <p className="text-[11px] uppercase tracking-[0.16em] text-[#8A6D3B]">{person.role}</p>
+        {person.courseLabel && (
+          <p className="text-xs text-[#57685F]">Curso: {person.courseLabel}</p>
+        )}
+        {person.title && <p className="text-xs text-[#47574E]">{person.title}</p>}
+        {hasFullBio && summary ? (
+          <>
+            <p className="text-sm leading-relaxed text-[#47574E]">
+              {expanded ? person.presentation : summary}
+            </p>
+            {person.presentationSummary && person.presentation && person.presentation !== person.presentationSummary && (
+              <button
+                type="button"
+                onClick={() => setExpanded((value) => !value)}
+                className="self-start pt-1 text-xs font-medium text-[#123524] underline underline-offset-2"
+              >
+                {expanded ? 'Recolher biografia' : 'Ver biografia completa'}
+              </button>
+            )}
+          </>
+        ) : null}
+        {person.lattesUrl ? (
+          <a
+            href={person.lattesUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 pt-2 text-xs text-[#123524] underline"
+          >
+            Currículo Lattes <ExternalLink className="h-3 w-3" />
+          </a>
+        ) : null}
+      </div>
+    </article>
+  );
+};
 
 const FacultyCard: React.FC<{ member: FacultyMember }> = ({ member }) => (
   <article className="faculty-reveal space-y-3 rounded-[1.5rem] border border-[#E5DFD3] bg-white p-5">

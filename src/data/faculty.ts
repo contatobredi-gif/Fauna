@@ -27,6 +27,8 @@ export interface PersonPhoto {
   authorized: boolean;
   sourceUrl?: string;
   archivePath?: string;
+  /** Enquadramento do retrato (CSS object-position), para preservar o rosto. */
+  objectPosition?: string;
 }
 
 export interface LeadershipProfile {
@@ -53,6 +55,7 @@ export interface CoordinatorProfile {
   area?: string;
   title?: string;
   presentation?: string;
+  presentationSummary?: string;
   photo: PersonPhoto;
   unit: InstitutionalUnit;
   publicationStatus: FacultyPublicationStatus;
@@ -161,10 +164,75 @@ export const DIRETORIA: LeadershipProfile[] = [
 export const LEADERSHIP = DIRETORIA;
 
 /**
- * Coordenação acadêmica da unidade Barcarena.
- * Vazio de propósito: coordenações de Belém não são importadas automaticamente.
+ * Grade de graduação informada para a unidade Barcarena.
+ * Reutilizável nas páginas individuais de curso. Sem duração, turno, modalidade, vagas ou ato MEC.
  */
-export const COORDENACAO: CoordinatorProfile[] = [];
+export const BARCARENA_GRADUATION_COURSES = [
+  { id: 'direito', name: 'Direito', type: 'Graduação' as const },
+  { id: 'enfermagem', name: 'Enfermagem', type: 'Graduação' as const },
+  { id: 'psicologia', name: 'Psicologia', type: 'Graduação' as const },
+] as const;
+
+export type BarcarenaGraduationCourseId = (typeof BARCARENA_GRADUATION_COURSES)[number]['id'];
+
+/**
+ * Coordenação acadêmica da unidade Barcarena.
+ * Publicação autorizada em 19/10/2026 (Prompt 05.2): Direito, Enfermagem e Psicologia.
+ */
+export const COORDENACAO: CoordinatorProfile[] = [
+  {
+    id: 'coordenacao-direito',
+    name: 'Evanilde Gomes Franco',
+    role: 'Coordenação do curso de Direito',
+    courseId: 'direito',
+    courseLabel: 'Direito',
+    photo: {
+      src: '/assets/equipe/evanilde-gomes-franco.jpeg',
+      alt: 'Retrato de Evanilde Gomes Franco, coordenação do curso de Direito',
+      authorized: true,
+      objectPosition: 'center 22%',
+      archivePath: 'FAUNA_Coordenacoes_Materiais/materiais-recebidos/Evanilde.jpeg',
+    },
+    unit: 'barcarena',
+    publicationStatus: 'publicado_barcarena',
+  },
+  {
+    id: 'coordenacao-enfermagem',
+    name: 'Adilson Mendes de Figueiredo Júnior',
+    role: 'Coordenação do curso de Enfermagem',
+    courseId: 'enfermagem',
+    courseLabel: 'Enfermagem',
+    photo: {
+      src: '/assets/equipe/adilson-mendes-de-figueiredo-junior.jpeg',
+      alt: 'Retrato de Adilson Mendes de Figueiredo Júnior, coordenação do curso de Enfermagem',
+      authorized: true,
+      objectPosition: 'center 18%',
+      archivePath: 'FAUNA_Coordenacoes_Materiais/materiais-recebidos/Adilson.jpeg',
+    },
+    unit: 'barcarena',
+    publicationStatus: 'publicado_barcarena',
+  },
+  {
+    id: 'coordenacao-psicologia',
+    name: 'Flavia Beatriz Xavier do Vale',
+    role: 'Coordenação do curso de Psicologia',
+    courseId: 'psicologia',
+    courseLabel: 'Psicologia',
+    presentationSummary:
+      'Graduada em Psicologia pela Universidade da Amazônia (UNAMA), Mestre e Doutora em Psicologia, na área de Teoria e Pesquisa do Comportamento, pela Universidade Federal do Pará (UFPA).',
+    presentation:
+      'Graduada em Psicologia pela Universidade da Amazônia (UNAMA), Mestre e Doutora em Psicologia, na área de Teoria e Pesquisa do Comportamento, pela Universidade Federal do Pará (UFPA). Possui experiência profissional em Psicologia Clínica, Avaliação Psicológica, Psicologia da Saúde, Psicologia Educacional e Psicologia do Esporte, com atuação também em pesquisa e educação. Possui experiência docente no ensino superior, supervisão clínica e tutoria em componentes curriculares na modalidade a distância, tendo atuado em diferentes Instituições de Educação Superior. Na graduação em Psicologia, possui experiência em componentes como Psicologia Experimental, Processos Psicológicos Básicos, Processos Grupais, Técnicas Projetivas e Expressivas de Avaliação, Métodos e Técnicas de Pesquisa em Psicologia, Técnicas de Avaliação Psicológica e Dinâmicas de Grupo. Desenvolve ainda atividades acadêmico-científicas e possui produção bibliográfica relacionada à Psicologia, com ênfase em aspectos psicológicos e comportamentais.',
+    photo: {
+      src: '/assets/equipe/flavia-beatriz-xavier-do-vale.jpeg',
+      alt: 'Retrato de Flavia Beatriz Xavier do Vale, coordenação do curso de Psicologia',
+      authorized: true,
+      objectPosition: 'center 12%',
+      archivePath: 'FAUNA_Coordenacoes_Materiais/materiais-recebidos/Flávia.jpeg',
+    },
+    unit: 'barcarena',
+    publicationStatus: 'publicado_barcarena',
+  },
+];
 
 /**
  * Corpo docente da unidade Barcarena, vinculado ao catálogo local (`courseIds`).
@@ -200,7 +268,7 @@ export const ACERVO_EQUIPE_SITE_ANTERIOR: RecoveredTeamProfile[] = [
     photoAuthorization: 'nao_verificada',
     lattesPublishedOnSource: false,
     bioOnSource: true,
-    notes: 'Bio e titulação (UNAMA / UFPA) recuperadas. Não publicar como coordenação de Barcarena até confirmação de atuação na unidade.',
+    notes: 'Confirmação Barcarena 19/10/2026: publicada em COORDENACAO com retrato oficial autorizado. Este registro permanece só como memória do site anterior.',
   },
   {
     id: 'acervo-evanilde',
@@ -214,7 +282,7 @@ export const ACERVO_EQUIPE_SITE_ANTERIOR: RecoveredTeamProfile[] = [
     photoAuthorization: 'nao_verificada',
     lattesPublishedOnSource: false,
     bioOnSource: false,
-    notes: 'Nome e cargo no site anterior; currículo ausente. Não atribuir à unidade Barcarena.',
+    notes: 'Confirmação Barcarena 19/10/2026: publicada em COORDENACAO com retrato oficial autorizado. Currículo ainda não enviado.',
   },
   {
     id: 'acervo-adilson',
@@ -228,10 +296,14 @@ export const ACERVO_EQUIPE_SITE_ANTERIOR: RecoveredTeamProfile[] = [
     photoAuthorization: 'nao_verificada',
     lattesPublishedOnSource: false,
     bioOnSource: false,
-    notes: 'Nome e cargo no site anterior; currículo ausente. Não atribuir à unidade Barcarena.',
+    notes: 'Confirmação Barcarena 19/10/2026: publicada em COORDENACAO com retrato oficial autorizado. Currículo ainda não enviado.',
   },
 ];
 
 export const publishedDiretoria = DIRETORIA.filter((person) => isPublicProfile(person.publicationStatus));
 export const publishedCoordenacao = COORDENACAO.filter((person) => isPublicProfile(person.publicationStatus));
 export const publishedDocentes = DOCENTES.filter((person) => isPublicProfile(person.publicationStatus));
+
+export function getCoordinatorByCourseId(courseId: string): CoordinatorProfile | undefined {
+  return publishedCoordenacao.find((person) => person.courseId === courseId);
+}
