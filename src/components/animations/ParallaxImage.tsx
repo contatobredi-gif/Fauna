@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { gsap } from '../../utils/motionConfig';
 
 interface Props {
   src: string;
@@ -25,29 +26,27 @@ export const ParallaxImage: React.FC<Props> = ({
   const imageRef = useRef<HTMLImageElement>(null);
   const reducedMotion = useReducedMotion();
 
-  useGSAPScene((ctx) => {
+  useGSAPScene(() => {
     if (reducedMotion || !containerRef.current || !imageRef.current) return;
 
-    import('../../utils/motionConfig').then(({ gsap }) => {
-      gsap.fromTo(
-        imageRef.current,
-        {
-          yPercent: -speed / 2,
-          scale: scaleFrom
-        },
-        {
-          yPercent: speed / 2,
-          scale: scaleTo,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1
-          }
+    gsap.fromTo(
+      imageRef.current,
+      {
+        yPercent: -speed / 2,
+        scale: scaleFrom
+      },
+      {
+        yPercent: speed / 2,
+        scale: scaleTo,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1
         }
-      );
-    });
+      }
+    );
   }, containerRef);
 
   return (

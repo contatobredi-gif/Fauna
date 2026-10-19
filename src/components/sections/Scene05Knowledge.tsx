@@ -3,6 +3,7 @@ import { Award, Users, Cpu, Trees, Target, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { gsap } from '../../utils/motionConfig';
 
 export const Scene05Knowledge: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -45,27 +46,25 @@ export const Scene05Knowledge: React.FC = () => {
   useGSAPScene(() => {
     if (reducedMotion || !containerRef.current || !gridRef.current) return;
 
-    import('../../utils/motionConfig').then(({ gsap }) => {
-      const items = gridRef.current ? Array.from(gridRef.current.children) : [];
-      if (items.length === 0) return;
+    const items = gridRef.current ? Array.from(gridRef.current.children) : [];
+    if (items.length === 0) return;
 
-      gsap.fromTo(
-        items,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: 'top 82%',
-            toggleActions: 'play none none none'
-          }
+    gsap.fromTo(
+      items,
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: gridRef.current,
+          start: 'top 82%',
+          toggleActions: 'play none none none'
         }
-      );
-    });
+      }
+    );
   }, containerRef);
 
   return (

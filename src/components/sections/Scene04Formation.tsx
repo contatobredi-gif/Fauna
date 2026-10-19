@@ -4,6 +4,7 @@ import { Clock, MapPin, ArrowRight, BookOpen, AlertCircle, Sparkles } from 'luci
 import { COURSES_DATA, Course } from '../../data/content';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { gsap } from '../../utils/motionConfig';
 
 interface Props {
   onOpenInterest: (courseId?: string) => void;
@@ -32,11 +33,12 @@ export const Scene04Formation: React.FC<Props> = ({ onOpenInterest }) => {
   useGSAPScene(() => {
     if (reducedMotion || !containerRef.current) return;
 
-    import('../../utils/motionConfig').then(({ gsap }) => {
-      // Entrance for courses grid
-      if (cardsGridRef.current) {
+    // Entrance for courses grid
+    if (cardsGridRef.current) {
+      const cards = Array.from(cardsGridRef.current.children);
+      if (cards.length > 0) {
         gsap.fromTo(
-          cardsGridRef.current.children,
+          cards,
           { opacity: 0, y: 20 },
           {
             opacity: 1,
@@ -52,7 +54,7 @@ export const Scene04Formation: React.FC<Props> = ({ onOpenInterest }) => {
           }
         );
       }
-    });
+    }
   }, containerRef, [filter, selectedArea]);
 
   return (

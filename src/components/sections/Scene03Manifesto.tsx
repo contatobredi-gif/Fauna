@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Compass } from 'lucide-react';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { MOTION_CONFIG } from '../../utils/motionConfig';
+import { gsap, MOTION_CONFIG } from '../../utils/motionConfig';
 
 export const Scene03Manifesto: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -12,85 +12,83 @@ export const Scene03Manifesto: React.FC = () => {
 
   const reducedMotion = useReducedMotion();
 
-  useGSAPScene(({}) => {
+  useGSAPScene(() => {
     if (reducedMotion || !containerRef.current || !wordsContainerRef.current) return;
 
-    import('../../utils/motionConfig').then(({ gsap }) => {
-      const isDesktop = MOTION_CONFIG.isDesktop();
-      const wordElements = wordsContainerRef.current?.querySelectorAll('.manifesto-word');
+    const isDesktop = MOTION_CONFIG.isDesktop();
+    const wordElements = wordsContainerRef.current?.querySelectorAll('.manifesto-word');
 
-      if (!wordElements || wordElements.length === 0) return;
+    if (!wordElements || wordElements.length === 0) return;
 
-      if (isDesktop) {
-        // Desktop pinned section with progressive word lighting
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top top',
-            end: '+=120%', // Controlled pin distance
-            pin: pinTargetRef.current,
-            scrub: 0.8,
-            anticipatePin: 1
-          }
-        });
+    if (isDesktop && pinTargetRef.current) {
+      // Desktop pinned section with progressive word lighting
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: '+=120%', // Controlled pin distance
+          pin: pinTargetRef.current,
+          scrub: 0.8,
+          anticipatePin: 1
+        }
+      });
 
-        // Initialize words at dimmed state
-        gsap.set(wordElements, { opacity: 0.18, y: 6 });
+      // Initialize words at dimmed state
+      gsap.set(wordElements, { opacity: 0.22, y: 4 });
 
-        // Stagger illuminate each word to full vibrancy
-        tl.to(wordElements, {
+      // Stagger illuminate each word to full vibrancy
+      tl.to(wordElements, {
+        opacity: 1,
+        y: 0,
+        stagger: 0.1,
+        ease: 'power1.inOut'
+      });
+
+      // Illuminate the deck text as the climax approaches
+      if (quoteDeckRef.current) {
+        gsap.set(quoteDeckRef.current, { opacity: 0.35, y: 15 });
+        tl.to(quoteDeckRef.current, {
           opacity: 1,
           y: 0,
-          stagger: 0.1,
-          ease: 'power1.inOut'
-        });
-
-        // Illuminate the deck text as the climax approaches
-        if (quoteDeckRef.current) {
-          gsap.set(quoteDeckRef.current, { opacity: 0.3, y: 15 });
-          tl.to(quoteDeckRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 0.4,
-            ease: 'power2.out'
-          }, '-=0.2');
+          duration: 0.4,
+          ease: 'power2.out'
+        }, '-=0.2');
+      }
+    } else {
+      // Mobile: Natural scroll reveal without intrusive screen lock
+      gsap.fromTo(
+        wordElements,
+        { opacity: 0.3, y: 10 },
+        {
+          opacity: 1,
+          y: 0,
+          stagger: 0.08,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: wordsContainerRef.current,
+            start: 'top 80%',
+            end: 'bottom 50%',
+            scrub: 0.5
+          }
         }
-      } else {
-        // Mobile: Natural scroll reveal without intrusive screen lock
+      );
+
+      if (quoteDeckRef.current) {
         gsap.fromTo(
-          wordElements,
-          { opacity: 0.25, y: 10 },
+          quoteDeckRef.current,
+          { opacity: 0, y: 16 },
           {
             opacity: 1,
             y: 0,
-            stagger: 0.08,
-            ease: 'power2.out',
+            duration: 0.8,
             scrollTrigger: {
-              trigger: wordsContainerRef.current,
-              start: 'top 80%',
-              end: 'bottom 50%',
-              scrub: 0.5
+              trigger: quoteDeckRef.current,
+              start: 'top 85%'
             }
           }
         );
-
-        if (quoteDeckRef.current) {
-          gsap.fromTo(
-            quoteDeckRef.current,
-            { opacity: 0, y: 16 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              scrollTrigger: {
-                trigger: quoteDeckRef.current,
-                start: 'top 85%'
-              }
-            }
-          );
-        }
       }
-    });
+    }
   }, containerRef);
 
   // Accessible phrase split

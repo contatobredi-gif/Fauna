@@ -18,7 +18,9 @@ import { ContatoPage } from './pages/ContatoPage';
 import { InterestModal } from './components/ui/InterestModal';
 import { ContentInventoryModal } from './components/ui/ContentInventoryModal';
 
-// Auto scroll to top on route navigation
+import { ScrollTrigger } from './utils/motionConfig';
+
+// Auto scroll to top on route navigation and recalculate ScrollTriggers
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
@@ -31,6 +33,13 @@ const ScrollToTop = () => {
       }
     }
     window.scrollTo({ top: 0, behavior: 'instant' as any });
+
+    // Ensure ScrollTrigger recalculates trigger positions on new page DOM
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 120);
+
+    return () => clearTimeout(timer);
   }, [pathname, hash]);
 
   return null;

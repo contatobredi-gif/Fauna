@@ -3,6 +3,7 @@ import { ArrowDown, ChevronRight, Compass } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { gsap } from '../../utils/motionConfig';
 
 interface Props {
   onOpenInterest: () => void;
@@ -20,51 +21,21 @@ export const Scene01Hero: React.FC<Props> = ({ onOpenInterest }) => {
 
   const reducedMotion = useReducedMotion();
 
-  useGSAPScene(({}) => {
+  useGSAPScene(() => {
     if (reducedMotion || !containerRef.current) return;
 
-    import('../../utils/motionConfig').then(({ gsap }) => {
-      // 1. Initial Entrance Timeline (< 1.8s, non-blocking)
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    // 1. Initial Entrance Timeline (< 1.8s, non-blocking)
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-      // Ensure elements start in correct state
-      gsap.set([tagRef.current, titleRef.current, deckRef.current, actionsRef.current, scrollCueRef.current], {
-        opacity: 0,
-        y: 24
-      });
+    tl.fromTo(bgImageRef.current, { scale: 1 }, { scale: 1.05, duration: 1.4, ease: 'power2.out' }, 0)
+      .fromTo(tagRef.current, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6 }, 0.15)
+      .fromTo(titleRef.current, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.8 }, 0.3)
+      .fromTo(deckRef.current, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6 }, 0.5)
+      .fromTo(actionsRef.current, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6 }, 0.65)
+      .fromTo(scrollCueRef.current, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5 }, 0.8);
 
-      tl.to(bgImageRef.current, {
-        scale: 1.05,
-        duration: 1.4,
-        ease: 'power2.out'
-      }, 0)
-      .to(tagRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6
-      }, 0.2)
-      .to(titleRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8
-      }, 0.4)
-      .to(deckRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6
-      }, 0.6)
-      .to(actionsRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6
-      }, 0.75)
-      .to(scrollCueRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.5
-      }, 0.9);
-
-      // 2. Scroll-Linked Cinematic Scrub
+    // 2. Scroll-Linked Cinematic Scrub
+    if (bgImageRef.current) {
       gsap.to(bgImageRef.current, {
         scale: 1.18,
         yPercent: 12,
@@ -76,7 +47,9 @@ export const Scene01Hero: React.FC<Props> = ({ onOpenInterest }) => {
           scrub: 1
         }
       });
+    }
 
+    if (contentRef.current) {
       gsap.to(contentRef.current, {
         yPercent: 35,
         opacity: 0.05,
@@ -88,7 +61,7 @@ export const Scene01Hero: React.FC<Props> = ({ onOpenInterest }) => {
           scrub: 1
         }
       });
-    });
+    }
   }, containerRef);
 
   return (

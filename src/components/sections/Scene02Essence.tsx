@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { gsap } from '../../utils/motionConfig';
 
 export const Scene02Essence: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -17,11 +18,11 @@ export const Scene02Essence: React.FC = () => {
   useGSAPScene(() => {
     if (reducedMotion || !containerRef.current) return;
 
-    import('../../utils/motionConfig').then(({ gsap }) => {
-      // 1. Mask reveal on main student photograph
+    // 1. Mask reveal on main student photograph
+    if (photoWrapperRef.current) {
       gsap.fromTo(
         photoWrapperRef.current,
-        { clipPath: 'inset(12% 0% 12% 0% round 1.5rem)', opacity: 0.8 },
+        { clipPath: 'inset(8% 0% 8% 0% round 1.5rem)', opacity: 0.8 },
         {
           clipPath: 'inset(0% 0% 0% 0% round 1.5rem)',
           opacity: 1,
@@ -34,8 +35,10 @@ export const Scene02Essence: React.FC = () => {
           }
         }
       );
+    }
 
-      // Subtle parallax on the inner image
+    // Subtle parallax on the inner image
+    if (photoImgRef.current && photoWrapperRef.current) {
       gsap.fromTo(
         photoImgRef.current,
         { yPercent: -8, scale: 1.08 },
@@ -51,8 +54,10 @@ export const Scene02Essence: React.FC = () => {
           }
         }
       );
+    }
 
-      // 2. Staggered reveal for right column text & accent card
+    // 2. Staggered reveal for right column text & accent card
+    if (textColRef.current) {
       gsap.fromTo(
         textColRef.current,
         { y: 35, opacity: 0 },
@@ -68,10 +73,12 @@ export const Scene02Essence: React.FC = () => {
           }
         }
       );
+    }
 
-      // 3. Independent depth on stats cards
-      if (statsRef.current) {
-        const cards = statsRef.current.children;
+    // 3. Independent depth on stats cards
+    if (statsRef.current) {
+      const cards = Array.from(statsRef.current.children);
+      if (cards.length > 0) {
         gsap.fromTo(
           cards,
           { y: 25, opacity: 0 },
@@ -89,7 +96,7 @@ export const Scene02Essence: React.FC = () => {
           }
         );
       }
-    });
+    }
   }, containerRef);
 
   return (

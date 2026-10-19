@@ -21,7 +21,7 @@ export function useGSAPScene(
     // Create GSAP context scoped to current component container
     const ctx = gsap.context(() => {
       callbackRef.current(ctx);
-    }, scopeRef);
+    }, scopeRef.current);
 
     return () => {
       ctx.revert(); // Cleans up all timelines and ScrollTriggers created in context

@@ -14,6 +14,17 @@ if (typeof window !== 'undefined') {
     limitCallbacks: true,
     ignoreMobileResize: true,
   });
+
+  // Refresh calculations once web fonts are fully loaded
+  if ('fonts' in document) {
+    document.fonts.ready.then(() => {
+      ScrollTrigger.refresh();
+    }).catch(() => {});
+  }
+
+  window.addEventListener('load', () => {
+    ScrollTrigger.refresh();
+  });
 }
 
 export { gsap, ScrollTrigger };

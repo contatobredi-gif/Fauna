@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Compass, Globe, MapPin, Anchor } from 'lucide-react';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { MOTION_CONFIG } from '../../utils/motionConfig';
+import { gsap, MOTION_CONFIG } from '../../utils/motionConfig';
 
 export const Scene06Barcarena: React.FC = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -44,22 +44,20 @@ export const Scene06Barcarena: React.FC = () => {
   useGSAPScene(() => {
     if (reducedMotion || !containerRef.current) return;
 
-    import('../../utils/motionConfig').then(({ gsap }) => {
-      if (MOTION_CONFIG.isDesktop()) {
-        // Step progression tied to scroll position
-        steps.forEach((_, index) => {
-          gsap.timeline({
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: `top+=${index * 120} center`,
-              end: `top+=${(index + 1) * 120} center`,
-              onEnter: () => setActiveStep(index),
-              onEnterBack: () => setActiveStep(index)
-            }
-          });
+    if (MOTION_CONFIG.isDesktop()) {
+      // Step progression tied to scroll position
+      steps.forEach((_, index) => {
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: `top+=${index * 120} center`,
+            end: `top+=${(index + 1) * 120} center`,
+            onEnter: () => setActiveStep(index),
+            onEnterBack: () => setActiveStep(index)
+          }
         });
-      }
-    });
+      });
+    }
   }, containerRef);
 
   const current = steps[activeStep];

@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { gsap } from '../../utils/motionConfig';
 
 interface Props {
   children: string;
@@ -29,35 +30,31 @@ export const RevealText: React.FC<Props> = ({
 
     // Use ScrollTrigger if not immediately in viewport
     const rect = containerRef.current.getBoundingClientRect();
-    const inInitialView = rect.top < window.innerHeight && rect.bottom > 0;
+    const inInitialView = typeof window !== 'undefined' && rect.top < window.innerHeight && rect.bottom > 0;
 
     if (inInitialView && delay === 0) {
-      import('../../utils/motionConfig').then(({ gsap }) => {
-        gsap.fromTo(
-          targets,
-          { opacity: 0, y: 24 },
-          { opacity: 1, y: 0, duration: 0.9, stagger: 0.04, ease: 'power3.out' }
-        );
-      });
+      gsap.fromTo(
+        targets,
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.9, stagger: 0.04, ease: 'power3.out' }
+      );
     } else {
-      import('../../utils/motionConfig').then(({ gsap, ScrollTrigger }) => {
-        gsap.fromTo(
-          targets,
-          { opacity: 0, y: 28 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            stagger: 0.05,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: 'top 85%',
-              toggleActions: 'play none none none'
-            }
+      gsap.fromTo(
+        targets,
+        { opacity: 0, y: 28 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          stagger: 0.05,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
           }
-        );
-      });
+        }
+      );
     }
   }, containerRef);
 

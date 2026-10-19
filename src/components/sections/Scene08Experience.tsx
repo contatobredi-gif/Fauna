@@ -3,6 +3,7 @@ import { Crown, Sparkles, HeartHandshake, Briefcase, Award, ArrowRight } from 'l
 import { Link } from 'react-router-dom';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { gsap } from '../../utils/motionConfig';
 
 export const Scene08Experience: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
@@ -58,15 +59,13 @@ export const Scene08Experience: React.FC = () => {
   useGSAPScene(() => {
     if (reducedMotion || !containerRef.current) return;
 
-    import('../../utils/motionConfig').then(({ gsap }) => {
-      if (spotlightRef.current) {
-        gsap.fromTo(
-          spotlightRef.current,
-          { opacity: 0.85, y: 8 },
-          { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }
-        );
-      }
-    });
+    if (spotlightRef.current) {
+      gsap.fromTo(
+        spotlightRef.current,
+        { opacity: 0.85, y: 8 },
+        { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }
+      );
+    }
   }, containerRef, [selectedTab]);
 
   return (

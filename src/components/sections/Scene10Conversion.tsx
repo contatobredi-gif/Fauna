@@ -3,6 +3,7 @@ import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { gsap } from '../../utils/motionConfig';
 
 interface Props {
   onOpenInterest: () => void;
@@ -17,41 +18,39 @@ export const Scene10Conversion: React.FC<Props> = ({ onOpenInterest }) => {
   useGSAPScene(() => {
     if (reducedMotion || !containerRef.current || !bgImgRef.current) return;
 
-    import('../../utils/motionConfig').then(({ gsap }) => {
-      // Subtle background zoom on scroll into view
+    // Subtle background zoom on scroll into view
+    gsap.fromTo(
+      bgImgRef.current,
+      { scale: 1.02 },
+      {
+        scale: 1.14,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1.2
+        }
+      }
+    );
+
+    // Subtle entrance for content
+    if (contentRef.current) {
       gsap.fromTo(
-        bgImgRef.current,
-        { scale: 1.02 },
+        contentRef.current,
+        { opacity: 0.85, y: 24 },
         {
-          scale: 1.14,
-          ease: 'none',
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power3.out',
           scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.2
+            trigger: contentRef.current,
+            start: 'top 82%'
           }
         }
       );
-
-      // Subtle entrance for content
-      if (contentRef.current) {
-        gsap.fromTo(
-          contentRef.current,
-          { opacity: 0.85, y: 24 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: contentRef.current,
-              start: 'top 82%'
-            }
-          }
-        );
-      }
-    });
+    }
   }, containerRef);
 
   return (

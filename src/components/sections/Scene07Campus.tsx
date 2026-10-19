@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Maximize2, X, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { MOTION_CONFIG } from '../../utils/motionConfig';
+import { gsap, MOTION_CONFIG } from '../../utils/motionConfig';
 
 interface SpaceItem {
   id: string;
@@ -59,30 +59,28 @@ export const Scene07Campus: React.FC = () => {
   useGSAPScene(() => {
     if (reducedMotion || !containerRef.current || !trackRef.current) return;
 
-    import('../../utils/motionConfig').then(({ gsap }) => {
-      if (MOTION_CONFIG.isDesktop()) {
-        const track = trackRef.current;
-        if (!track) return;
+    if (MOTION_CONFIG.isDesktop()) {
+      const track = trackRef.current;
+      if (!track) return;
 
-        // Calculate scroll amount: total width minus window width
-        const totalScroll = track.scrollWidth - window.innerWidth + 80;
+      // Calculate scroll amount: total width minus window width
+      const totalScroll = track.scrollWidth - window.innerWidth + 80;
 
-        if (totalScroll > 0) {
-          gsap.to(track, {
-            x: -totalScroll,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: 'top top',
-              end: `+=${Math.min(totalScroll, 1200)}`, // Controlled, polite scroll length
-              pin: pinWrapperRef.current,
-              scrub: 1,
-              anticipatePin: 1
-            }
-          });
-        }
+      if (totalScroll > 0) {
+        gsap.to(track, {
+          x: -totalScroll,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top top',
+            end: `+=${Math.min(totalScroll, 1200)}`, // Controlled, polite scroll length
+            pin: pinWrapperRef.current,
+            scrub: 1,
+            anticipatePin: 1
+          }
+        });
       }
-    });
+    }
   }, containerRef);
 
   return (
