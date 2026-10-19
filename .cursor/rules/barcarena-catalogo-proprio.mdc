@@ -1,0 +1,13 @@
+---
+description: Catálogo de cursos de Barcarena é independente da grade de Belém
+alwaysApply: true
+---
+
+# Catálogo próprio de Barcarena
+
+A unidade FAUNA Barcarena terá catálogo próprio de cursos, independente da grade de Belém.
+
+- Não importar automaticamente cursos, coordenações, docentes ou benefícios de outras unidades.
+- Não republicar pessoas do acervo de Belém como quadro de Barcarena sem confirmação.
+- Vínculos de docentes usam `courseIds` locais em `src/data/faculty.ts`.
+- Fotografias de pessoas só entram na UI com autorização explícita (`photo.authorized`).
