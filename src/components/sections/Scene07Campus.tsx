@@ -1,8 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Maximize2, X, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { gsap, MOTION_CONFIG } from '../../utils/motionConfig';
+import { gsap } from '../../utils/motionConfig';
+import { SectionEyebrow } from '../ui/SectionEyebrow';
 
 interface SpaceItem {
   id: string;
@@ -15,10 +16,11 @@ interface SpaceItem {
 
 export const Scene07Campus: React.FC = () => {
   const [activeImage, setActiveImage] = useState<SpaceItem | null>(null);
+  const [needsNav, setNeedsNav] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const pinWrapperRef = useRef<HTMLDivElement>(null);
-
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const lastFocusRef = useRef<HTMLElement | null>(null);
   const reducedMotion = useReducedMotion();
 
   const spaces: SpaceItem[] = [
@@ -57,87 +59,154 @@ export const Scene07Campus: React.FC = () => {
   ];
 
   useGSAPScene(() => {
-    if (reducedMotion || !containerRef.current || !trackRef.current) return;
+    if (reducedMotion || !containerRef.current) return;
+    const cards = containerRef.current.querySelectorAll('[data-campus-card]');
+    if (!cards.length) return;
 
-    if (MOTION_CONFIG.isDesktop()) {
-      const track = trackRef.current;
-      if (!track) return;
-
-      // Calculate scroll amount: total width minus window width
-      const totalScroll = track.scrollWidth - window.innerWidth + 80;
-
-      if (totalScroll > 0) {
-        gsap.to(track, {
-          x: -totalScroll,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top top',
-            end: `+=${Math.min(totalScroll, 1200)}`, // Controlled, polite scroll length
-            pin: pinWrapperRef.current,
-            scrub: 1,
-            anticipatePin: 1
-          }
-        });
+    gsap.fromTo(
+      cards,
+      { opacity: 0, y: 18 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        stagger: 0.08,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: scrollerRef.current,
+          start: 'top 82%',
+          toggleActions: 'play none none none'
+        }
       }
-    }
+    );
   }, containerRef);
+
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+
+    const measure = () => {
+      setNeedsNav(scroller.scrollWidth > scroller.clientWidth + 4);
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(scroller);
+    window.addEventListener('resize', measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!activeImage) return;
+
+    lastFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    closeBtnRef.current?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setActiveImage(null);
+      }
+    };
+
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = previousOverflow;
+      lastFocusRef.current?.focus();
+    };
+  }, [activeImage]);
+
+  const scrollByCard = (direction: -1 | 1) => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    const card = scroller.querySelector('[data-campus-card]') as HTMLElement | null;
+    const amount = (card?.offsetWidth ?? 280) + 24;
+    scroller.scrollBy({
+      left: direction * amount,
+      behavior: reducedMotion ? 'auto' : 'smooth'
+    });
+  };
 
   return (
     <section
       id="campus"
       ref={containerRef}
-      className="py-24 bg-[#FAF8F5] text-[#1D2B24] border-t border-[#E5DFD3] relative"
+      className="py-24 bg-[#FAF8F5] text-[#1D2B24] relative"
     >
-      <div ref={pinWrapperRef} className="w-full">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-[#8A6D3B] uppercase mb-3">
-                <span>07 / CAMPUS FAUNA</span>
-                <span>—</span>
-                <span>INFRAESTRUTURA & ESPAÇOS</span>
-              </div>
-              <h2 className="text-3xl sm:text-5xl font-serif font-normal text-[#123524] leading-tight">
-                Um espaço para viver o conhecimento.
-              </h2>
-            </div>
-
-            <p className="text-xs text-[#57685F] max-w-sm leading-relaxed">
-              Ambientes desenhados com a sofisticação de uma Faculdade Boutique e a funcionalidade prática que sua carreira exige.
-            </p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <SectionEyebrow>Campus FAUNA</SectionEyebrow>
+            <h2 className="text-3xl sm:text-5xl font-serif font-normal text-[#123524] leading-tight">
+              Um espaço para viver o conhecimento.
+            </h2>
           </div>
-        </div>
 
-        {/* Gallery Rail: Horizontal Scroll on Desktop, Natural Touch Swipe on Mobile */}
-        <div className="overflow-x-auto lg:overflow-visible no-scrollbar pb-6 px-4 sm:px-6 lg:px-8">
-          <div
-            ref={trackRef}
-            className="flex gap-6 will-change-transform min-w-max lg:min-w-0"
-          >
+          <p className="text-xs text-[#57685F] max-w-sm leading-relaxed">
+            Imagens conceituais e de referência. Não representam, por si só, instalações já homologadas em Barcarena.
+          </p>
+        </div>
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {needsNav && (
+          <div className="flex justify-end gap-2 mb-4">
+            <button
+              type="button"
+              onClick={() => scrollByCard(-1)}
+              className="w-10 h-10 rounded-full border border-[#E5DFD3] bg-white text-[#123524] hover:border-[#C9A44C] hover:text-[#8A6D3B] transition-colors"
+              aria-label="Ver espaços anteriores"
+            >
+              <ChevronLeft className="w-5 h-5 mx-auto" />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollByCard(1)}
+              className="w-10 h-10 rounded-full border border-[#E5DFD3] bg-white text-[#123524] hover:border-[#C9A44C] hover:text-[#8A6D3B] transition-colors"
+              aria-label="Ver próximos espaços"
+            >
+              <ChevronRight className="w-5 h-5 mx-auto" />
+            </button>
+          </div>
+        )}
+
+        <div
+          ref={scrollerRef}
+          className="overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 -mx-4 px-4 sm:mx-0 sm:px-0"
+        >
+          <div className="flex w-max mx-auto gap-5">
             {spaces.map((space) => (
-              <div
+              <button
                 key={space.id}
+                type="button"
+                data-campus-card
                 onClick={() => setActiveImage(space)}
-                className="w-80 sm:w-96 shrink-0 group bg-white rounded-3xl border border-[#E5DFD3] overflow-hidden hover:border-[#C9A44C] hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between"
+                className="w-[min(17.25rem,82vw)] lg:w-[17.5rem] shrink-0 snap-start group bg-white rounded-3xl border border-[#E5DFD3] overflow-hidden hover:border-[#C9A44C] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer text-left flex flex-col justify-between"
               >
-                <div className="relative h-64 overflow-hidden bg-[#0A1F15]">
+                <div className="relative h-56 overflow-hidden bg-[#0A1F15]">
                   <img
                     src={space.image}
                     alt={space.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = '/assets/fauna-photo-4-Bot9x6Jv.jpg';
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-85 group-hover:opacity-60 transition-opacity" />
-                  
+
                   <div className="absolute top-3.5 right-3.5 p-2 rounded-full bg-black/50 backdrop-blur-md text-white/80 group-hover:text-white transition-colors">
                     <Maximize2 className="w-4 h-4" />
                   </div>
 
                   <div className="absolute bottom-3.5 left-4 right-4 text-white">
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-[#E5C879] block">
+                    <span className="text-[10px] uppercase tracking-widest text-[#E5C879] block">
                       {space.category}
                     </span>
                     <span className="text-xs text-white/80 font-light block line-clamp-1">
@@ -161,32 +230,35 @@ export const Scene07Campus: React.FC = () => {
                     <span>Ampliar fotografia</span>
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
-
       </div>
 
-      {/* Fullscreen Photo Modal */}
       {activeImage && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in"
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
           onClick={() => setActiveImage(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="campus-photo-title"
         >
-          <div 
+          <div
             className="relative max-w-4xl w-full bg-[#FAF8F5] rounded-3xl overflow-hidden shadow-2xl border border-white/20"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative h-[60vh] bg-black">
+            <div className="relative h-[50vh] sm:h-[60vh] bg-black">
               <img
                 src={activeImage.image}
                 alt={activeImage.name}
                 className="w-full h-full object-contain"
               />
               <button
+                ref={closeBtnRef}
+                type="button"
                 onClick={() => setActiveImage(null)}
-                className="absolute top-4 right-4 p-2 rounded-full bg-black/60 text-white hover:bg-black/90 transition-colors"
+                className="absolute top-4 right-4 p-2 rounded-full bg-black/60 text-white hover:bg-black/90 transition-colors min-h-11 min-w-11"
                 aria-label="Fechar ampliação"
               >
                 <X className="w-5 h-5" />
@@ -194,11 +266,11 @@ export const Scene07Campus: React.FC = () => {
             </div>
 
             <div className="p-6 bg-[#FAF8F5]">
-              <div className="flex items-center justify-between text-xs text-[#8A6D3B] font-mono uppercase mb-1">
+              <div className="flex items-center justify-between gap-3 text-xs text-[#8A6D3B] uppercase mb-1">
                 <span>{activeImage.category}</span>
                 <span>{activeImage.validationStatus}</span>
               </div>
-              <h4 className="text-2xl font-serif font-bold text-[#123524] mb-2">
+              <h4 id="campus-photo-title" className="text-2xl font-serif font-bold text-[#123524] mb-2">
                 {activeImage.name}
               </h4>
               <p className="text-sm text-[#57685F] leading-relaxed">

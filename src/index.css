@@ -63,6 +63,25 @@
   text-wrap: balance;
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .motion-safe\:animate-bounce {
+    animation: none;
+  }
+}
+
 /* Grain texture overlay */
 .bg-grain {
   background-image: radial-gradient(rgba(18, 53, 36, 0.04) 1px, transparent 0);

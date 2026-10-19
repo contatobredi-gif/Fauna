@@ -25,6 +25,12 @@ if (typeof window !== 'undefined') {
   window.addEventListener('load', () => {
     ScrollTrigger.refresh();
   });
+
+  let resizeTimer = 0;
+  window.addEventListener('resize', () => {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => ScrollTrigger.refresh(), 180);
+  });
 }
 
 export { gsap, ScrollTrigger };

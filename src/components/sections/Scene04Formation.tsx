@@ -1,11 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, MapPin, ArrowRight, BookOpen, AlertCircle, Sparkles } from 'lucide-react';
-import { COURSES_DATA, Course } from '../../data/content';
+import { Clock, MapPin, ArrowRight, AlertCircle } from 'lucide-react';
+import { COURSES_DATA } from '../../data/content';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { gsap } from '../../utils/motionConfig';
 import { EnrollmentCta } from '../ui/EnrollmentCta';
+import { SectionEyebrow } from '../ui/SectionEyebrow';
 
 export const Scene04Formation: React.FC = () => {
   const [filter, setFilter] = useState<'Todos' | 'Graduação' | 'Pós-graduação'>('Todos');
@@ -30,18 +31,35 @@ export const Scene04Formation: React.FC = () => {
   useGSAPScene(() => {
     if (reducedMotion || !containerRef.current) return;
 
-    // Entrance for courses grid
+    if (showcaseRef.current) {
+      gsap.fromTo(
+        showcaseRef.current,
+        { opacity: 0, y: 24 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: showcaseRef.current,
+            start: 'top 82%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    }
+
     if (cardsGridRef.current) {
       const cards = Array.from(cardsGridRef.current.children);
       if (cards.length > 0) {
         gsap.fromTo(
           cards,
-          { opacity: 0, y: 20 },
+          { opacity: 0, y: 22 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.6,
-            stagger: 0.06,
+            duration: 0.65,
+            stagger: 0.07,
             ease: 'power3.out',
             scrollTrigger: {
               trigger: cardsGridRef.current,
@@ -65,11 +83,7 @@ export const Scene04Formation: React.FC = () => {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-[#8A6D3B] uppercase mb-3">
-              <span>04 / FORMAÇÃO ACADÊMICA</span>
-              <span>—</span>
-              <span>CURSOS & CARREIRAS</span>
-            </div>
+            <SectionEyebrow>Formação acadêmica</SectionEyebrow>
             <h2 className="text-3xl sm:text-5xl font-serif font-normal text-[#123524] leading-tight">
               Encontre o caminho para o seu futuro.
             </h2>
@@ -199,10 +213,10 @@ export const Scene04Formation: React.FC = () => {
               <div
                 key={c.id}
                 onClick={() => setFeaturedCourseIndex(index)}
-                className={`rounded-2xl border p-6 flex flex-col justify-between transition-all duration-200 cursor-pointer ${
+                className={`rounded-2xl border p-6 flex flex-col justify-between transition-all duration-300 cursor-pointer ${
                   isSelected
-                    ? 'bg-white border-[#C9A44C] ring-2 ring-[#C9A44C]/30 shadow-md'
-                    : 'bg-white/80 border-[#E5DFD3] hover:border-[#123524] hover:shadow-xs'
+                    ? 'bg-white border-[#C9A44C] ring-2 ring-[#C9A44C]/30 shadow-md -translate-y-0.5'
+                    : 'bg-white/80 border-[#E5DFD3] hover:border-[#123524] hover:shadow-md hover:-translate-y-1'
                 }`}
               >
                 <div>

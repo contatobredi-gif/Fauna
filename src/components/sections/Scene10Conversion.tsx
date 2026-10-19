@@ -61,7 +61,9 @@ export const Scene10Conversion: React.FC = () => {
           ref={bgImgRef}
           src="/assets/amazonia_hero_aerial.jpg"
           alt="Paisagem aérea amazônica"
-          className="w-full h-full object-cover object-center opacity-30 filter saturate-50 will-change-transform scale-105"
+          className="w-full h-full object-cover object-center opacity-30 saturate-50 will-change-transform scale-105"
+          loading="lazy"
+          decoding="async"
           onError={(e) => {
             (e.target as HTMLImageElement).src = '/assets/amazonia_hero_aerial_1792412120513.jpg';
           }}
@@ -76,7 +78,7 @@ export const Scene10Conversion: React.FC = () => {
         {/* Kicker */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-[#C9A44C]/30 backdrop-blur-md text-xs font-mono text-[#E5C879]">
           <Sparkles className="w-3.5 h-3.5 text-[#C9A44C]" />
-          <span className="uppercase tracking-widest">10 / SEU PRÓXIMO PASSO</span>
+          <span className="uppercase tracking-widest">Seu próximo passo</span>
         </div>
 
         {/* Monumental Headline */}

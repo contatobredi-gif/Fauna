@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { ArrowDown, ChevronRight, Compass } from 'lucide-react';
+import { ArrowDown, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
@@ -9,6 +9,7 @@ import { EnrollmentCta } from '../ui/EnrollmentCta';
 export const Scene01Hero: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const bgImageRef = useRef<HTMLImageElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const tagRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -21,41 +22,57 @@ export const Scene01Hero: React.FC = () => {
   useGSAPScene(() => {
     if (reducedMotion || !containerRef.current) return;
 
-    // 1. Initial Entrance Timeline (< 1.8s, non-blocking)
+    const titleLines = titleRef.current?.querySelectorAll('.hero-line');
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-    tl.fromTo(bgImageRef.current, { scale: 1 }, { scale: 1.05, duration: 1.4, ease: 'power2.out' }, 0)
-      .fromTo(tagRef.current, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6 }, 0.15)
-      .fromTo(titleRef.current, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.8 }, 0.3)
-      .fromTo(deckRef.current, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6 }, 0.5)
-      .fromTo(actionsRef.current, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6 }, 0.65)
-      .fromTo(scrollCueRef.current, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5 }, 0.8);
+    tl.fromTo(
+      bgImageRef.current,
+      { scale: 1.18, yPercent: -4 },
+      { scale: 1.06, yPercent: 0, duration: 1.45, ease: 'power2.out' },
+      0
+    )
+      .fromTo(tagRef.current, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.55 }, 0.18)
+      .fromTo(titleLines ?? titleRef.current, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.75, stagger: 0.12 }, 0.28)
+      .fromTo(deckRef.current, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.55 }, 0.62)
+      .fromTo(actionsRef.current, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5 }, 0.78)
+      .fromTo(scrollCueRef.current, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.45 }, 0.95);
 
-    // 2. Scroll-Linked Cinematic Scrub
     if (bgImageRef.current) {
       gsap.to(bgImageRef.current, {
-        scale: 1.18,
-        yPercent: 12,
+        scale: 1.2,
+        yPercent: 10,
         ease: 'none',
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
           end: 'bottom top',
-          scrub: 1
+          scrub: 1.1
         }
       });
     }
 
     if (contentRef.current) {
       gsap.to(contentRef.current, {
-        yPercent: 35,
-        opacity: 0.05,
+        yPercent: 16,
         ease: 'none',
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: '85% top',
+          end: '80% top',
           scrub: 1
+        }
+      });
+    }
+
+    if (overlayRef.current) {
+      gsap.to(overlayRef.current, {
+        opacity: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'center top',
+          end: 'bottom top',
+          scrub: 0.8
         }
       });
     }
@@ -66,29 +83,29 @@ export const Scene01Hero: React.FC = () => {
       ref={containerRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#06150E] text-white"
     >
-      {/* Background Image with Cinematic Scrim */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <img
           ref={bgImageRef}
           src="/assets/amazonia_hero_aerial.jpg"
           alt="Floresta e rios amazônicos em Barcarena, Pará"
-          className="w-full h-full object-cover object-center will-change-transform scale-105"
+          fetchPriority="high"
+          className="w-full h-full object-cover object-center will-change-transform scale-110"
           onError={(e) => {
-            // Fallback to secondary path if needed
             (e.target as HTMLImageElement).src = '/assets/amazonia_hero_aerial_1792412120513.jpg';
           }}
         />
-        {/* Measured Contrast Scrims */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#06150E] via-[#06150E]/60 to-[#06150E]/30" />
-        <div className="absolute inset-0 bg-radial from-transparent via-[#06150E]/40 to-[#06150E]/80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#06150E] via-[#06150E]/55 to-[#06150E]/25" />
+        <div className="absolute inset-0 bg-radial from-transparent via-[#06150E]/35 to-[#06150E]/75" />
+        <div
+          ref={overlayRef}
+          className="absolute inset-0 bg-gradient-to-b from-transparent via-[#06150E]/40 to-[#FAF8F5] opacity-0 pointer-events-none"
+        />
       </div>
 
-      {/* Hero Content Container */}
       <div
         ref={contentRef}
         className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-28 pb-20 will-change-transform"
       >
-        {/* Step 1: Territorial Tagline */}
         <div
           ref={tagRef}
           className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 border border-[#C9A44C]/30 backdrop-blur-md mb-8"
@@ -101,19 +118,15 @@ export const Scene01Hero: React.FC = () => {
           <span className="text-[11px] text-[#E5C879]">Da Amazônia para o mundo</span>
         </div>
 
-        {/* Step 2: Monumental Headline */}
         <h1
           ref={titleRef}
           className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-normal tracking-tight text-[#FAF8F5] leading-[1.05] mb-6 text-balance"
         >
-          Formação de excelência.
-          <br />
-          <span className="italic font-light text-[#E5C879]">Raízes amazônicas.</span>
-          <br />
-          Horizontes sem fronteiras.
+          <span className="hero-line block">Formação de excelência.</span>
+          <span className="hero-line block italic font-light text-[#E5C879]">Raízes amazônicas.</span>
+          <span className="hero-line block">Horizontes sem fronteiras.</span>
         </h1>
 
-        {/* Step 3: Narrative Deck */}
         <p
           ref={deckRef}
           className="max-w-2xl mx-auto text-base sm:text-lg text-[#D0DFD6] font-light leading-relaxed mb-10 text-balance"
@@ -121,18 +134,17 @@ export const Scene01Hero: React.FC = () => {
           Uma nova experiência de ensino superior em Barcarena, conectando conhecimento contemporâneo, inovação e oportunidades para transformar a Amazônia e alcançar o mundo.
         </p>
 
-        {/* Step 4: Action Buttons */}
         <div
           ref={actionsRef}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto"
         >
           <EnrollmentCta
             kind="vestibular"
-            className="w-full sm:w-auto px-8 py-3.5 bg-[#C9A44C] hover:bg-[#D8B45E] text-[#123524] text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 text-center"
+            className="w-full sm:w-auto px-8 py-3.5 bg-[#C9A44C] hover:bg-[#D8B45E] text-[#123524] text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 text-center"
           >
             Processo Seletivo Barcarena
           </EnrollmentCta>
-          
+
           <Link
             to="/cursos"
             className="w-full sm:w-auto px-8 py-3.5 bg-white/10 hover:bg-white/20 text-[#FAF8F5] text-sm font-medium rounded-lg backdrop-blur-sm border border-white/20 transition-all duration-200 flex items-center justify-center gap-1.5"
@@ -142,21 +154,17 @@ export const Scene01Hero: React.FC = () => {
           </Link>
         </div>
 
-        {/* Step 5: Chapter Marker & Scroll Cue */}
         <div
           ref={scrollCueRef}
           className="mt-16 flex flex-col items-center gap-2 text-xs text-[#A3B8AD]"
         >
-          <span className="text-[10px] uppercase tracking-widest text-[#C9A44C]/80 font-mono">
-            01 / CAPÍTULO ORIGEM
-          </span>
           <a
             href="#nossa-essencia"
             className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors py-2"
-            aria-label="Rolar para a próxima seção"
+            aria-label="Rolar para Nossa Essência"
           >
             <span className="text-xs">Descubra a FAUNA</span>
-            <ArrowDown className="w-3.5 h-3.5 animate-bounce text-[#C9A44C]" />
+            <ArrowDown className="w-3.5 h-3.5 motion-safe:animate-bounce text-[#C9A44C]" />
           </a>
         </div>
       </div>

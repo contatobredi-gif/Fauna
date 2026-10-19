@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
-import { Compass, Globe, MapPin, Anchor } from 'lucide-react';
+import { Compass } from 'lucide-react';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { gsap, MOTION_CONFIG } from '../../utils/motionConfig';
+import { gsap } from '../../utils/motionConfig';
+import { SectionEyebrow } from '../ui/SectionEyebrow';
 
 export const Scene06Barcarena: React.FC = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -42,23 +43,17 @@ export const Scene06Barcarena: React.FC = () => {
   ];
 
   useGSAPScene(() => {
-    if (reducedMotion || !containerRef.current) return;
+    if (reducedMotion || !visualRef.current) return;
 
-    if (MOTION_CONFIG.isDesktop()) {
-      // Step progression tied to scroll position
-      steps.forEach((_, index) => {
-        gsap.timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: `top+=${index * 120} center`,
-            end: `top+=${(index + 1) * 120} center`,
-            onEnter: () => setActiveStep(index),
-            onEnterBack: () => setActiveStep(index)
-          }
-        });
-      });
-    }
-  }, containerRef);
+    const photo = visualRef.current.querySelector('img');
+    if (!photo) return;
+
+    gsap.fromTo(
+      photo,
+      { scale: 1.08 },
+      { scale: 1, duration: 0.9, ease: 'power2.out' }
+    );
+  }, containerRef, [activeStep]);
 
   const current = steps[activeStep];
 
@@ -72,11 +67,9 @@ export const Scene06Barcarena: React.FC = () => {
         
         {/* Header */}
         <div className="max-w-3xl mb-16">
-          <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-[#8A6D3B] uppercase mb-3">
-            <Compass className="w-4 h-4" />
-            <span>06 / TERRITÓRIO & ESCALA</span>
-            <span>—</span>
-            <span>BARCARENA</span>
+          <div className="flex items-center gap-2 mb-3">
+            <Compass className="w-4 h-4 text-[#C9A44C]" />
+            <SectionEyebrow className="mb-0">Barcarena para o mundo</SectionEyebrow>
           </div>
           <h2 className="text-3xl sm:text-5xl font-serif font-normal text-[#123524] leading-tight text-balance">
             De Barcarena para o mundo.
@@ -94,27 +87,26 @@ export const Scene06Barcarena: React.FC = () => {
             {steps.map((st, i) => {
               const isCurrent = activeStep === i;
               return (
-                <div
+                <button
                   key={st.label}
+                  type="button"
                   onClick={() => setActiveStep(i)}
-                  className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${
+                  className={`w-full text-left p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${
                     isCurrent
-                      ? 'bg-[#123524] text-white border-[#123524] shadow-lg transform -translate-y-0.5'
+                      ? 'bg-[#123524] text-white border-[#123524] shadow-lg -translate-y-0.5'
                       : 'bg-white text-[#1D2B24] border-[#E5DFD3] hover:border-[#C9A44C]'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
-                      <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-mono font-semibold ${
-                        isCurrent ? 'bg-[#C9A44C] text-[#123524]' : 'bg-[#F2ECE1] text-[#57685F]'
-                      }`}>
-                        0{i + 1}
-                      </span>
+                      <span className={`w-2.5 h-2.5 rounded-full ${
+                        isCurrent ? 'bg-[#C9A44C]' : 'bg-[#D9D2C3]'
+                      }`} />
                       <h3 className="font-serif text-xl font-bold tracking-wide">
                         {st.label}
                       </h3>
                     </div>
-                    <span className={`text-[10px] font-mono ${isCurrent ? 'text-[#E5C879]' : 'text-[#8A6D3B]'}`}>
+                    <span className={`text-[10px] ${isCurrent ? 'text-[#E5C879]' : 'text-[#8A6D3B]'}`}>
                       {st.coords}
                     </span>
                   </div>
@@ -122,7 +114,7 @@ export const Scene06Barcarena: React.FC = () => {
                   <p className={`text-xs leading-relaxed ${isCurrent ? 'text-[#C7D9D0]' : 'text-[#57685F]'}`}>
                     {st.desc}
                   </p>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -134,7 +126,9 @@ export const Scene06Barcarena: React.FC = () => {
               <img
                 src="/assets/barcarena_territorio_river.jpg"
                 alt="Hidrovia e território em Barcarena, Pará"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = '/assets/barcarena_territorio_river_1792412121050.jpg';
                 }}
@@ -162,8 +156,8 @@ export const Scene06Barcarena: React.FC = () => {
 
               {/* Bottom Caption & Territorial Statement */}
               <div className="relative z-10 text-white space-y-2 max-w-lg">
-                <span className="text-[10px] uppercase tracking-widest font-mono text-[#C9A44C] block">
-                  ETAPA {activeStep + 1} DE 4 · {current.label.toUpperCase()}
+                <span className="text-[10px] uppercase tracking-widest text-[#C9A44C] block">
+                  {current.label}
                 </span>
                 <h4 className="text-2xl sm:text-3xl font-serif font-semibold text-white">
                   {current.sub}

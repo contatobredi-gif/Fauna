@@ -21,4 +21,17 @@ export default defineConfig({
     port: 3000,
     host: '0.0.0.0',
   },
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            { name: 'gsap', test: /[\\/]node_modules[\\/]gsap[\\/]/ },
+            { name: 'react-vendor', test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/ },
+            { name: 'router', test: /[\\/]node_modules[\\/]react-router/ },
+          ],
+        },
+      },
+    },
+  },
 });

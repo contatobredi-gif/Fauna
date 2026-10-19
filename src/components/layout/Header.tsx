@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, GraduationCap } from 'lucide-react';
 import { flattenNavItems, MAIN_NAV_LINKS, type NavLink } from '../../data/navigation';
@@ -14,32 +14,85 @@ export const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openMobileGroup, setOpenMobileGroup] = useState<string | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
   const navId = useId();
   const headerRef = useRef<HTMLElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const hoverLockedRef = useRef(false);
+  const leaveTimerRef = useRef<number>(0);
+  const triggerRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+
+  const closeMenus = useCallback((options?: { lockHover?: boolean; restoreFocus?: boolean }) => {
+    const openLabel = activeDropdown;
+    window.clearTimeout(leaveTimerRef.current);
+    setActiveDropdown(null);
+    setMobileMenuOpen(false);
+    setOpenMobileGroup(null);
+
+    if (options?.lockHover) {
+      hoverLockedRef.current = true;
+    }
+
+    const active = document.activeElement;
+    if (active instanceof HTMLElement && (headerRef.current?.contains(active) || document.getElementById('menu-mobile')?.contains(active))) {
+      if (options?.restoreFocus && openLabel && triggerRefs.current[openLabel]) {
+        triggerRefs.current[openLabel]?.focus();
+      } else {
+        active.blur();
+      }
+    }
+  }, [activeDropdown]);
+
+  const openDropdown = (label: string, source: 'hover' | 'focus' = 'hover') => {
+    if (source === 'hover' && hoverLockedRef.current) return;
+    window.clearTimeout(leaveTimerRef.current);
+    setActiveDropdown(label);
+  };
+
+  const scheduleDropdownClose = () => {
+    window.clearTimeout(leaveTimerRef.current);
+    leaveTimerRef.current = window.setTimeout(() => {
+      setActiveDropdown(null);
+    }, 140);
+  };
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
+    const handleScroll = () => setScrolled(window.scrollY > 32);
+    handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
+    window.clearTimeout(leaveTimerRef.current);
+    setActiveDropdown(null);
     setMobileMenuOpen(false);
     setOpenMobileGroup(null);
+    // Keep hoverLockedRef so the cursor remaining over the nav does not reopen the panel.
   }, [location.pathname, location.search, location.hash]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setMobileMenuOpen(false);
-        const active = document.activeElement;
-        if (active instanceof HTMLElement) active.blur();
+        closeMenus({ restoreFocus: true });
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [closeMenus]);
+
+  useEffect(() => {
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node;
+      const mobileDrawer = document.getElementById('menu-mobile');
+      if (headerRef.current?.contains(target) || mobileDrawer?.contains(target)) return;
+      closeMenus();
+      hoverLockedRef.current = false;
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => document.removeEventListener('pointerdown', onPointerDown);
+  }, [closeMenus]);
 
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
@@ -48,8 +101,14 @@ export const Header: React.FC = () => {
     };
   }, [mobileMenuOpen]);
 
+  useEffect(() => () => window.clearTimeout(leaveTimerRef.current), []);
+
   const isHome = location.pathname === '/';
-  const isSolid = scrolled || !isHome;
+  const isGlass = scrolled || !isHome || mobileMenuOpen;
+
+  const handleNavLinkClick = () => {
+    closeMenus({ lockHover: true });
+  };
 
   const renderSubmenu = (link: NavLink) => {
     if (link.groups?.length) {
@@ -62,7 +121,8 @@ export const Header: React.FC = () => {
                 <Link
                   key={sub.href + sub.label}
                   to={sub.href}
-                  className="block p-2 rounded-lg hover:bg-[#F2ECE1] transition-colors"
+                  onClick={handleNavLinkClick}
+                  className="block p-2 rounded-lg hover:bg-[#F2ECE1] transition-colors duration-200"
                 >
                   <span className="block text-xs font-semibold text-[#123524]">{sub.label}</span>
                   {sub.description && (
@@ -82,7 +142,8 @@ export const Header: React.FC = () => {
           <Link
             key={sub.href + sub.label}
             to={sub.href}
-            className="block p-2.5 rounded-lg hover:bg-[#F2ECE1] transition-colors"
+            onClick={handleNavLinkClick}
+            className="block p-2.5 rounded-lg hover:bg-[#F2ECE1] transition-colors duration-200"
           >
             <span className="block text-xs font-semibold text-[#123524]">{sub.label}</span>
             {sub.description && (
@@ -94,75 +155,115 @@ export const Header: React.FC = () => {
     );
   };
 
+  const logoMark = (
+    <img
+      src="/logo.png"
+      alt="FAUNA — Faculdade Universo da Amazônia"
+      className={`w-auto object-contain object-left transition-[height] duration-300 ${
+        isGlass ? 'h-11 sm:h-12 lg:h-[3.35rem]' : 'h-12 sm:h-[3.35rem] lg:h-16'
+      }`}
+    />
+  );
+
   return (
     <>
       <header
         ref={headerRef}
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-          isSolid
-            ? 'bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#123524]/10 shadow-xs py-3 text-[#1D2B24]'
-            : 'bg-gradient-to-b from-black/70 via-black/30 to-transparent py-5 text-white'
+        className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,box-shadow,padding,backdrop-filter,border-color] duration-500 ${
+          isGlass
+            ? 'bg-[#FAF8F5]/70 backdrop-blur-xl border-b border-[#123524]/10 shadow-[0_10px_40px_rgba(6,21,14,0.08)] py-2.5 text-[#1D2B24]'
+            : 'bg-gradient-to-b from-black/60 via-black/25 to-transparent border-b border-transparent py-4 text-white'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-6">
+          <div className="flex items-center justify-between gap-4 lg:gap-6">
             <Link
               to="/"
-              className="flex items-center gap-3 shrink-0 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A44C] rounded-lg"
+              onClick={handleNavLinkClick}
+              className="shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A44C] rounded-xl"
               aria-label="FAUNA — Faculdade Universo da Amazônia, Página Inicial"
             >
-              <img
-                src="/logo.png"
-                alt="Logo FAUNA"
-                className="h-9 md:h-11 w-auto object-contain"
-              />
-              <div className="hidden sm:block">
-                <span className={`block font-serif text-lg tracking-wider font-semibold uppercase ${
-                  isSolid ? 'text-[#123524]' : 'text-white'
-                }`}>
-                  FAUNA
+              {isGlass ? (
+                logoMark
+              ) : (
+                <span className="inline-flex items-center rounded-xl bg-[#FAF8F5]/92 px-2 py-1 shadow-[0_10px_30px_rgba(6,21,14,0.28)]">
+                  {logoMark}
                 </span>
-                <span className={`block text-[10px] tracking-widest uppercase font-medium ${
-                  isSolid ? 'text-[#57685F]' : 'text-white/80'
-                }`}>
-                  Barcarena · Pará
-                </span>
-              </div>
+              )}
             </Link>
 
-            <nav className="hidden lg:flex items-center gap-3 text-[13px] font-medium" aria-label="Principal">
+            <nav
+              ref={navRef}
+              className="hidden lg:flex items-center gap-2.5 xl:gap-3 text-[12px] xl:text-[13px] font-medium min-w-0"
+              aria-label="Principal"
+              data-dropdown={activeDropdown ?? ''}
+              onMouseLeave={() => {
+                scheduleDropdownClose();
+                hoverLockedRef.current = false;
+              }}
+              onPointerLeave={() => {
+                scheduleDropdownClose();
+                hoverLockedRef.current = false;
+              }}
+            >
               {MAIN_NAV_LINKS.map((link) => {
                 const isActive = isSectionActive(location.pathname, link.href);
                 const items = flattenNavItems(link);
                 const hasSub = items.length > 0;
                 const alignEnd = link.label === 'Vida Acadêmica' || link.label === 'Benefícios';
+                const isOpen = hasSub && activeDropdown === link.label;
 
                 return (
-                  <div key={link.label} className="relative group">
+                  <div
+                    key={link.label}
+                    className="relative"
+                    onMouseEnter={() => {
+                      if (hasSub) openDropdown(link.label, 'hover');
+                      else if (!hoverLockedRef.current) setActiveDropdown(null);
+                    }}
+                    onPointerEnter={() => {
+                      if (hasSub) openDropdown(link.label, 'hover');
+                      else if (!hoverLockedRef.current) setActiveDropdown(null);
+                    }}
+                    onFocusCapture={() => {
+                      if (hasSub) openDropdown(link.label, 'focus');
+                    }}
+                    onBlur={(event) => {
+                      if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+                        setActiveDropdown(null);
+                      }
+                    }}
+                  >
                     <Link
+                      ref={(node) => {
+                        triggerRefs.current[link.label] = node;
+                      }}
                       to={link.href}
+                      onClick={handleNavLinkClick}
                       aria-haspopup={hasSub ? 'true' : undefined}
+                      aria-expanded={hasSub ? isOpen : undefined}
                       aria-controls={hasSub ? `${navId}-${link.label}` : undefined}
-                      className={`inline-flex items-center gap-1 py-2 transition-colors whitespace-nowrap hover:text-[#C9A44C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A44C] rounded-sm ${
+                      className={`inline-flex items-center gap-1 py-2 transition-colors duration-200 whitespace-nowrap hover:text-[#C9A44C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A44C] rounded-sm ${
                         isActive
                           ? 'text-[#C9A44C] font-semibold'
-                          : isSolid
+                          : isGlass
                           ? 'text-[#1D2B24]'
                           : 'text-white/95'
                       }`}
                     >
                       <span>{link.label}</span>
                       {hasSub && (
-                        <ChevronDown className="w-3.5 h-3.5 opacity-70 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
+                        <ChevronDown className={`w-3.5 h-3.5 opacity-70 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                       )}
                     </Link>
 
                     {hasSub && (
                       <div
                         id={`${navId}-${link.label}`}
-                        className={`absolute top-full ${alignEnd ? 'right-0' : 'left-0'} pt-1 z-50 hidden group-hover:block group-focus-within:block`}
+                        hidden={!isOpen}
+                        className={`absolute top-full ${alignEnd ? 'right-0' : 'left-0'} pt-1 z-50 ${isOpen ? 'block' : 'hidden'}`}
                       >
-                        <div className="bg-[#FAF8F5] border border-[#E5DFD3] rounded-xl shadow-xl text-[#1D2B24]">
+                        <div className="bg-[#FAF8F5]/95 backdrop-blur-xl border border-[#E5DFD3] rounded-xl shadow-xl text-[#1D2B24]">
                           {renderSubmenu(link)}
                         </div>
                       </div>
@@ -175,8 +276,9 @@ export const Header: React.FC = () => {
             <div className="flex items-center gap-2 shrink-0">
               <Link
                 to="/vida-academica#portais"
-                className={`hidden sm:inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                  isSolid
+                onClick={handleNavLinkClick}
+                className={`hidden sm:inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors duration-200 ${
+                  isGlass
                     ? 'text-[#123524] hover:bg-[#123524]/5'
                     : 'text-white hover:bg-white/10'
                 }`}
@@ -186,7 +288,7 @@ export const Header: React.FC = () => {
               </Link>
 
               <EnrollmentCta
-                className="px-4 py-2 text-xs md:text-sm font-semibold text-[#123524] bg-[#C9A44C] hover:bg-[#D8B45E] rounded-lg shadow-xs whitespace-nowrap text-center"
+                className="px-4 py-2 text-xs md:text-sm font-semibold text-[#123524] bg-[#C9A44C] hover:bg-[#D8B45E] rounded-lg shadow-xs whitespace-nowrap text-center transition-colors duration-200"
               >
                 Inscreva-se
               </EnrollmentCta>
@@ -194,8 +296,8 @@ export const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen((value) => !value)}
-                className={`lg:hidden p-2 rounded-lg transition-colors ${
-                  isSolid
+                className={`lg:hidden p-2 rounded-lg transition-colors duration-200 ${
+                  isGlass
                     ? 'text-[#123524] hover:bg-[#123524]/10'
                     : 'text-white hover:bg-white/10'
                 }`}
@@ -213,19 +315,18 @@ export const Header: React.FC = () => {
       {mobileMenuOpen && (
         <div
           id="menu-mobile"
-          className="fixed inset-0 z-50 lg:hidden bg-[#FAF8F5] text-[#1D2B24] overflow-y-auto flex flex-col"
+          className="fixed inset-0 z-[60] lg:hidden bg-[#FAF8F5] text-[#1D2B24] overflow-y-auto flex flex-col"
           role="dialog"
           aria-modal="true"
           aria-label="Menu de navegação"
         >
-          <div className="flex items-center justify-between p-4 border-b border-[#E5DFD3]">
-            <Link to="/" className="flex items-center gap-2">
-              <img src="/logo.png" alt="FAUNA" className="h-8 w-auto" />
-              <span className="font-serif font-bold text-lg text-[#123524]">FAUNA</span>
+          <div className="flex items-center justify-between p-4 border-b border-[#E5DFD3] bg-[#FAF8F5]/90 backdrop-blur-xl">
+            <Link to="/" onClick={handleNavLinkClick} className="inline-flex items-center" aria-label="FAUNA — Página inicial">
+              <img src="/logo.png" alt="" className="h-12 w-auto object-contain" />
             </Link>
             <button
               type="button"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => closeMenus()}
               className="p-2 text-[#123524] hover:bg-[#123524]/10 rounded-lg"
               aria-label="Fechar menu"
             >
@@ -244,6 +345,7 @@ export const Header: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <Link
                       to={link.href}
+                      onClick={handleNavLinkClick}
                       className={`flex-1 text-base font-serif font-semibold py-2 ${
                         active ? 'text-[#C9A44C]' : 'text-[#123524]'
                       }`}
@@ -268,6 +370,7 @@ export const Header: React.FC = () => {
                         <Link
                           key={sub.href + sub.label}
                           to={sub.href}
+                          onClick={handleNavLinkClick}
                           className="block text-sm text-[#57685F] py-2 min-h-11"
                         >
                           {sub.label}
