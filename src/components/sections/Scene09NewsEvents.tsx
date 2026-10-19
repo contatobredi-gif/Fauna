@@ -1,11 +1,46 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, ArrowRight, Clock, Bookmark } from 'lucide-react';
+import { Clock, Bookmark, ArrowRight } from 'lucide-react';
 import { NEWS_DATA } from '../../data/content';
+import { useGSAPScene } from '../../hooks/useGSAPScene';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 export const Scene09NewsEvents: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = useReducedMotion();
+
+  useGSAPScene(() => {
+    if (reducedMotion || !containerRef.current || !gridRef.current) return;
+
+    import('../../utils/motionConfig').then(({ gsap }) => {
+      const items = gridRef.current ? Array.from(gridRef.current.children) : [];
+      if (items.length === 0) return;
+
+      gsap.fromTo(
+        items,
+        { opacity: 0, y: 25 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: gridRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    });
+  }, containerRef);
+
   return (
-    <section className="py-28 bg-[#FAF8F5] text-[#1D2B24] border-t border-[#E5DFD3]">
+    <section
+      ref={containerRef}
+      className="py-28 bg-[#FAF8F5] text-[#1D2B24] border-t border-[#E5DFD3]"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
@@ -31,22 +66,28 @@ export const Scene09NewsEvents: React.FC = () => {
         </div>
 
         {/* 3-Card Editorial Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div
+          ref={gridRef}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
           {NEWS_DATA.map((article) => (
             <article
               key={article.id}
-              className="bg-white rounded-2xl border border-[#E5DFD3] overflow-hidden hover:border-[#C9A44C] hover:shadow-lg transition-all duration-300 flex flex-col justify-between group"
+              className="bg-white rounded-3xl border border-[#E5DFD3] overflow-hidden hover:border-[#C9A44C] hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
             >
               <div>
-                <div className="relative h-52 overflow-hidden bg-[#0A1F15]">
+                <div className="relative h-56 overflow-hidden bg-[#0A1F15]">
                   <img
                     src={article.image}
                     alt={article.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/assets/fauna-photo-3-DKHEpz8K.jpg';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   
-                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-[#123524]/90 backdrop-blur-md text-[10px] font-mono text-[#E5C879] uppercase tracking-wider">
+                  <div className="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-[#123524]/90 backdrop-blur-md text-[10px] font-mono text-[#E5C879] uppercase tracking-wider">
                     {article.category}
                   </div>
                 </div>

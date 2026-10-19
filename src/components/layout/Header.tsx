@@ -30,13 +30,16 @@ export const Header: React.FC<Props> = ({ onOpenInterest, onOpenInventory }) => 
     setPortalsOpen(false);
   }, [location.pathname]);
 
+  const isHome = location.pathname === '/';
+  const isSolid = scrolled || !isHome;
+
   return (
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-          scrolled
-            ? 'bg-[#FAF8F5]/90 backdrop-blur-md border-b border-[#123524]/10 shadow-xs py-3'
-            : 'bg-gradient-to-b from-black/60 via-black/30 to-transparent py-5 text-white'
+          isSolid
+            ? 'bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#123524]/10 shadow-xs py-3 text-[#1D2B24]'
+            : 'bg-gradient-to-b from-black/70 via-black/30 to-transparent py-5 text-white'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,12 +59,12 @@ export const Header: React.FC<Props> = ({ onOpenInterest, onOpenInventory }) => 
               />
               <div className="hidden sm:block">
                 <span className={`block font-serif text-lg tracking-wider font-semibold uppercase ${
-                  scrolled ? 'text-[#123524]' : 'text-white'
+                  isSolid ? 'text-[#123524]' : 'text-white'
                 }`}>
                   FAUNA
                 </span>
                 <span className={`block text-[10px] tracking-widest uppercase font-medium ${
-                  scrolled ? 'text-[#57685F]' : 'text-white/80'
+                  isSolid ? 'text-[#57685F]' : 'text-white/80'
                 }`}>
                   Barcarena · Pará
                 </span>
@@ -86,7 +89,7 @@ export const Header: React.FC<Props> = ({ onOpenInterest, onOpenInventory }) => 
                       className={`inline-flex items-center gap-1 py-1 transition-colors whitespace-nowrap shrink-0 hover:text-[#C9A44C] ${
                         isActive
                           ? 'text-[#C9A44C] font-semibold'
-                          : scrolled
+                          : isSolid
                           ? 'text-[#1D2B24]'
                           : 'text-white/95'
                       }`}
@@ -133,7 +136,7 @@ export const Header: React.FC<Props> = ({ onOpenInterest, onOpenInventory }) => 
                 type="button"
                 onClick={onOpenInventory}
                 className={`hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors border ${
-                  scrolled
+                  isSolid
                     ? 'border-[#123524]/20 text-[#123524] hover:bg-[#123524]/5'
                     : 'border-white/20 text-white/90 hover:bg-white/10'
                 }`}
@@ -149,7 +152,7 @@ export const Header: React.FC<Props> = ({ onOpenInterest, onOpenInventory }) => 
                   type="button"
                   onClick={() => setPortalsOpen(!portalsOpen)}
                   className={`hidden sm:inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                    scrolled
+                    isSolid
                       ? 'text-[#123524] hover:bg-[#123524]/5'
                       : 'text-white hover:bg-white/10'
                   }`}
@@ -193,7 +196,7 @@ export const Header: React.FC<Props> = ({ onOpenInterest, onOpenInventory }) => 
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className={`lg:hidden p-2 rounded-lg transition-colors ${
-                  scrolled
+                  isSolid
                     ? 'text-[#123524] hover:bg-[#123524]/10'
                     : 'text-white hover:bg-white/10'
                 }`}

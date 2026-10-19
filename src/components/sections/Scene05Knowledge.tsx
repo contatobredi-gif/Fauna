@@ -1,8 +1,14 @@
-import React from 'react';
-import { Award, Users, Cpu, Trees, Sparkles, Target } from 'lucide-react';
+import React, { useRef } from 'react';
+import { Award, Users, Cpu, Trees, Target, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useGSAPScene } from '../../hooks/useGSAPScene';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 export const Scene05Knowledge: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = useReducedMotion();
+
   const pillars = [
     {
       icon: Award,
@@ -36,8 +42,37 @@ export const Scene05Knowledge: React.FC = () => {
     }
   ];
 
+  useGSAPScene(() => {
+    if (reducedMotion || !containerRef.current || !gridRef.current) return;
+
+    import('../../utils/motionConfig').then(({ gsap }) => {
+      const items = gridRef.current ? Array.from(gridRef.current.children) : [];
+      if (items.length === 0) return;
+
+      gsap.fromTo(
+        items,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: gridRef.current,
+            start: 'top 82%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    });
+  }, containerRef);
+
   return (
-    <section className="py-28 bg-[#123524] text-[#FAF8F5] relative overflow-hidden">
+    <section
+      ref={containerRef}
+      className="py-28 bg-[#123524] text-[#FAF8F5] relative overflow-hidden"
+    >
       {/* Background Ambience */}
       <div className="absolute inset-0 bg-radial from-[#1A4B34]/30 via-transparent to-transparent pointer-events-none" />
 
@@ -58,14 +93,17 @@ export const Scene05Knowledge: React.FC = () => {
           </p>
         </div>
 
-        {/* Pillars Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Pillars Grid with Stagger Entrance */}
+        <div
+          ref={gridRef}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
           {pillars.map((p, idx) => {
             const Icon = p.icon;
             return (
               <div
                 key={p.title}
-                className="p-8 rounded-2xl bg-[#0E281C] border border-[#1C4E36] hover:border-[#C9A44C]/60 transition-all duration-300 group"
+                className="p-8 rounded-3xl bg-[#0E281C] border border-[#1C4E36] hover:border-[#C9A44C]/60 hover:-translate-y-1 transition-all duration-300 group"
               >
                 <div className="w-12 h-12 rounded-xl bg-[#123524] border border-[#C9A44C]/30 flex items-center justify-center text-[#E5C879] group-hover:scale-110 transition-transform mb-6">
                   <Icon className="w-6 h-6" />
@@ -83,7 +121,7 @@ export const Scene05Knowledge: React.FC = () => {
         </div>
 
         {/* Footnote Link */}
-        <div className="mt-12 text-center">
+        <div className="mt-14 text-center">
           <Link
             to="/institucional#metodo-saber-mais"
             className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[#C9A44C] hover:text-[#FAF8F5] transition-colors"

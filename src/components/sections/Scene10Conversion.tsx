@@ -1,26 +1,82 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useGSAPScene } from '../../hooks/useGSAPScene';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 interface Props {
   onOpenInterest: () => void;
 }
 
 export const Scene10Conversion: React.FC<Props> = ({ onOpenInterest }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const bgImgRef = useRef<HTMLImageElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = useReducedMotion();
+
+  useGSAPScene(() => {
+    if (reducedMotion || !containerRef.current || !bgImgRef.current) return;
+
+    import('../../utils/motionConfig').then(({ gsap }) => {
+      // Subtle background zoom on scroll into view
+      gsap.fromTo(
+        bgImgRef.current,
+        { scale: 1.02 },
+        {
+          scale: 1.14,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.2
+          }
+        }
+      );
+
+      // Subtle entrance for content
+      if (contentRef.current) {
+        gsap.fromTo(
+          contentRef.current,
+          { opacity: 0.85, y: 24 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: contentRef.current,
+              start: 'top 82%'
+            }
+          }
+        );
+      }
+    });
+  }, containerRef);
+
   return (
-    <section className="relative py-32 bg-[#06150E] text-white overflow-hidden">
+    <section
+      ref={containerRef}
+      className="relative py-32 bg-[#06150E] text-white overflow-hidden"
+    >
       {/* Background Aerial Amazonian Canopy */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 overflow-hidden">
         <img
-          src="/src/assets/images/amazonia_hero_aerial_1792412120513.jpg"
+          ref={bgImgRef}
+          src="/assets/amazonia_hero_aerial.jpg"
           alt="Paisagem aérea amazônica"
-          className="w-full h-full object-cover object-center opacity-25 filter saturate-50"
+          className="w-full h-full object-cover object-center opacity-30 filter saturate-50 will-change-transform scale-105"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = '/assets/amazonia_hero_aerial_1792412120513.jpg';
+          }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#06150E] via-[#06150E]/85 to-[#06150E]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#06150E] via-[#06150E]/80 to-[#06150E]" />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
-        
+      <div
+        ref={contentRef}
+        className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8"
+      >
         {/* Kicker */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-[#C9A44C]/30 backdrop-blur-md text-xs font-mono text-[#E5C879]">
           <Sparkles className="w-3.5 h-3.5 text-[#C9A44C]" />

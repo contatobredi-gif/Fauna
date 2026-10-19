@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { Maximize2, X, Eye, Sparkles } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Maximize2, X, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useGSAPScene } from '../../hooks/useGSAPScene';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { MOTION_CONFIG } from '../../utils/motionConfig';
 
 interface SpaceItem {
   id: string;
@@ -12,6 +15,11 @@ interface SpaceItem {
 
 export const Scene07Campus: React.FC = () => {
   const [activeImage, setActiveImage] = useState<SpaceItem | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const pinWrapperRef = useRef<HTMLDivElement>(null);
+
+  const reducedMotion = useReducedMotion();
 
   const spaces: SpaceItem[] = [
     {
@@ -19,7 +27,7 @@ export const Scene07Campus: React.FC = () => {
       name: 'Pavilhão Central & Jardins Bioclimáticos',
       category: 'Arquitetura Sustentável',
       desc: 'Estruturas abertas em madeira certificada e vidro, desenhadas para ventilação natural tropical e harmonia botânica com a floresta.',
-      image: '/src/assets/images/campus_architecture_modern_1792412121402.jpg',
+      image: '/assets/campus_architecture_modern.jpg',
       validationStatus: 'Conceito arquitetônico do Polo Barcarena'
     },
     {
@@ -27,7 +35,7 @@ export const Scene07Campus: React.FC = () => {
       name: 'Laboratórios de Simulação Realística',
       category: 'Saúde & Prática',
       desc: 'Ambientes preparados para o aprendizado prático de Enfermagem, Biomedicina e saúde com manequins anatômicos e tecnologia clínica.',
-      image: '/public/assets/fauna-photo-4-Bot9x6Jv.jpg',
+      image: '/assets/fauna-photo-4-Bot9x6Jv.jpg',
       validationStatus: 'Instalações laboratoriais em implantação'
     },
     {
@@ -35,7 +43,7 @@ export const Scene07Campus: React.FC = () => {
       name: 'Auditório Magna & Eventos Acadêmicos',
       category: 'Cultura & Solenidades',
       desc: 'Espaço nobre para a Solenidade do Manto, premiações de Mérito Acadêmico, congressos e palestras com grandes nomes.',
-      image: '/public/assets/fauna-photo-5-0dhzBddg.jpg',
+      image: '/assets/fauna-photo-5-0dhzBddg.jpg',
       validationStatus: 'Complexo de convivência e solenidades'
     },
     {
@@ -43,80 +51,121 @@ export const Scene07Campus: React.FC = () => {
       name: 'Commons de Aprendizagem & Biblioteca',
       category: 'Pesquisa & Convivência',
       desc: 'Salas integradas de estudo individual e em grupo, com terminais de pesquisa digital e acervo bibliográfico contemporâneo.',
-      image: '/public/assets/fauna-photo-8-Ce0rlf9T.jpg',
+      image: '/assets/fauna-photo-8-Ce0rlf9T.jpg',
       validationStatus: 'Espaços de convivência integrados'
     }
   ];
 
-  return (
-    <section className="py-28 bg-[#FAF8F5] text-[#1D2B24] border-t border-[#E5DFD3]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-[#8A6D3B] uppercase mb-3">
-              <span>07 / CAMPUS FAUNA</span>
-              <span>—</span>
-              <span>INFRAESTRUTURA & ESPAÇOS</span>
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-serif font-normal text-[#123524] leading-tight">
-              Um espaço para viver o conhecimento.
-            </h2>
-          </div>
+  useGSAPScene(() => {
+    if (reducedMotion || !containerRef.current || !trackRef.current) return;
 
-          <p className="text-xs text-[#57685F] max-w-sm leading-relaxed">
-            Ambientes acolhedores desenhados com a sofisticação de uma Faculdade Boutique e a funcionalidade prática que sua carreira exige.
-          </p>
+    import('../../utils/motionConfig').then(({ gsap }) => {
+      if (MOTION_CONFIG.isDesktop()) {
+        const track = trackRef.current;
+        if (!track) return;
+
+        // Calculate scroll amount: total width minus window width
+        const totalScroll = track.scrollWidth - window.innerWidth + 80;
+
+        if (totalScroll > 0) {
+          gsap.to(track, {
+            x: -totalScroll,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: 'top top',
+              end: `+=${Math.min(totalScroll, 1200)}`, // Controlled, polite scroll length
+              pin: pinWrapperRef.current,
+              scrub: 1,
+              anticipatePin: 1
+            }
+          });
+        }
+      }
+    });
+  }, containerRef);
+
+  return (
+    <section
+      id="campus"
+      ref={containerRef}
+      className="py-24 bg-[#FAF8F5] text-[#1D2B24] border-t border-[#E5DFD3] relative"
+    >
+      <div ref={pinWrapperRef} className="w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-[#8A6D3B] uppercase mb-3">
+                <span>07 / CAMPUS FAUNA</span>
+                <span>—</span>
+                <span>INFRAESTRUTURA & ESPAÇOS</span>
+              </div>
+              <h2 className="text-3xl sm:text-5xl font-serif font-normal text-[#123524] leading-tight">
+                Um espaço para viver o conhecimento.
+              </h2>
+            </div>
+
+            <p className="text-xs text-[#57685F] max-w-sm leading-relaxed">
+              Ambientes desenhados com a sofisticação de uma Faculdade Boutique e a funcionalidade prática que sua carreira exige.
+            </p>
+          </div>
         </div>
 
-        {/* Gallery Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {spaces.map((space) => (
-            <div
-              key={space.id}
-              onClick={() => setActiveImage(space)}
-              className="group bg-white rounded-2xl border border-[#E5DFD3] overflow-hidden hover:border-[#C9A44C] hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between"
-            >
-              <div className="relative h-60 overflow-hidden bg-[#0A1F15]">
-                <img
-                  src={space.image}
-                  alt={space.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
-                
-                <div className="absolute top-3 right-3 p-2 rounded-full bg-black/40 backdrop-blur-md text-white/80 group-hover:text-white transition-colors">
-                  <Maximize2 className="w-4 h-4" />
+        {/* Gallery Rail: Horizontal Scroll on Desktop, Natural Touch Swipe on Mobile */}
+        <div className="overflow-x-auto lg:overflow-visible no-scrollbar pb-6 px-4 sm:px-6 lg:px-8">
+          <div
+            ref={trackRef}
+            className="flex gap-6 will-change-transform min-w-max lg:min-w-0"
+          >
+            {spaces.map((space) => (
+              <div
+                key={space.id}
+                onClick={() => setActiveImage(space)}
+                className="w-80 sm:w-96 shrink-0 group bg-white rounded-3xl border border-[#E5DFD3] overflow-hidden hover:border-[#C9A44C] hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between"
+              >
+                <div className="relative h-64 overflow-hidden bg-[#0A1F15]">
+                  <img
+                    src={space.image}
+                    alt={space.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/assets/fauna-photo-4-Bot9x6Jv.jpg';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-85 group-hover:opacity-60 transition-opacity" />
+                  
+                  <div className="absolute top-3.5 right-3.5 p-2 rounded-full bg-black/50 backdrop-blur-md text-white/80 group-hover:text-white transition-colors">
+                    <Maximize2 className="w-4 h-4" />
+                  </div>
+
+                  <div className="absolute bottom-3.5 left-4 right-4 text-white">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-[#E5C879] block">
+                      {space.category}
+                    </span>
+                    <span className="text-xs text-white/80 font-light block line-clamp-1">
+                      {space.validationStatus}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="absolute bottom-3 left-3 right-3 text-white">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-[#E5C879] block">
-                    {space.category}
-                  </span>
-                  <span className="text-xs text-white/80 font-light block line-clamp-1">
-                    {space.validationStatus}
-                  </span>
+                <div className="p-6 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-serif text-xl font-bold text-[#123524] group-hover:text-[#8A6D3B] transition-colors mb-2">
+                      {space.name}
+                    </h3>
+                    <p className="text-xs text-[#57685F] leading-relaxed line-clamp-3">
+                      {space.desc}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 flex items-center gap-1.5 text-xs text-[#123524] font-medium group-hover:text-[#8A6D3B] transition-colors">
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Ampliar fotografia</span>
+                  </div>
                 </div>
               </div>
-
-              <div className="p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="font-serif text-lg font-bold text-[#123524] group-hover:text-[#8A6D3B] transition-colors mb-2">
-                    {space.name}
-                  </h3>
-                  <p className="text-xs text-[#57685F] leading-relaxed line-clamp-3">
-                    {space.desc}
-                  </p>
-                </div>
-
-                <div className="pt-4 flex items-center gap-1.5 text-xs text-[#123524] font-medium group-hover:text-[#8A6D3B] transition-colors">
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>Ampliar fotografia</span>
-                </div>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
       </div>
@@ -128,7 +177,7 @@ export const Scene07Campus: React.FC = () => {
           onClick={() => setActiveImage(null)}
         >
           <div 
-            className="relative max-w-4xl w-full bg-[#FAF8F5] rounded-2xl overflow-hidden shadow-2xl border border-white/20"
+            className="relative max-w-4xl w-full bg-[#FAF8F5] rounded-3xl overflow-hidden shadow-2xl border border-white/20"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative h-[60vh] bg-black">

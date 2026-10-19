@@ -1,10 +1,103 @@
-import React from 'react';
-import { ArrowRight, Compass, Sparkles, BookOpen } from 'lucide-react';
+import React, { useRef } from 'react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useGSAPScene } from '../../hooks/useGSAPScene';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 export const Scene02Essence: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const photoWrapperRef = useRef<HTMLDivElement>(null);
+  const photoImgRef = useRef<HTMLImageElement>(null);
+  const textColRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const accentCardRef = useRef<HTMLDivElement>(null);
+
+  const reducedMotion = useReducedMotion();
+
+  useGSAPScene(() => {
+    if (reducedMotion || !containerRef.current) return;
+
+    import('../../utils/motionConfig').then(({ gsap }) => {
+      // 1. Mask reveal on main student photograph
+      gsap.fromTo(
+        photoWrapperRef.current,
+        { clipPath: 'inset(12% 0% 12% 0% round 1.5rem)', opacity: 0.8 },
+        {
+          clipPath: 'inset(0% 0% 0% 0% round 1.5rem)',
+          opacity: 1,
+          duration: 1.2,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: photoWrapperRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+
+      // Subtle parallax on the inner image
+      gsap.fromTo(
+        photoImgRef.current,
+        { yPercent: -8, scale: 1.08 },
+        {
+          yPercent: 8,
+          scale: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: photoWrapperRef.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1
+          }
+        }
+      );
+
+      // 2. Staggered reveal for right column text & accent card
+      gsap.fromTo(
+        textColRef.current,
+        { y: 35, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: textColRef.current,
+            start: 'top 78%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+
+      // 3. Independent depth on stats cards
+      if (statsRef.current) {
+        const cards = statsRef.current.children;
+        gsap.fromTo(
+          cards,
+          { y: 25, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.12,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: statsRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
+    });
+  }, containerRef);
+
   return (
-    <section id="nossa-essencia" className="py-28 bg-[#FAF8F5] text-[#1D2B24] relative overflow-hidden">
+    <section
+      id="nossa-essencia"
+      ref={containerRef}
+      className="py-28 bg-[#FAF8F5] text-[#1D2B24] relative overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Editorial Section Header */}
@@ -24,13 +117,20 @@ export const Scene02Essence: React.FC = () => {
           
           {/* Left Column (7 cols): Dominant Editorial Visual with Masked Detail */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="relative group overflow-hidden rounded-2xl shadow-xl bg-[#E8E1D2]">
+            <div
+              ref={photoWrapperRef}
+              className="relative overflow-hidden rounded-3xl shadow-xl bg-[#E8E1D2] will-change-transform"
+            >
               <img
-                src="/src/assets/images/estudantes_inovacao_amazonia_1792412121181.jpg"
+                ref={photoImgRef}
+                src="/assets/estudantes_inovacao_amazonia.jpg"
                 alt="Estudantes em ambiente contemporâneo de aprendizagem"
-                className="w-full h-[400px] sm:h-[500px] object-cover transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-[400px] sm:h-[500px] object-cover will-change-transform"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/assets/fauna-photo-2-DMa52OaB.jpg';
+                }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
               
               <div className="absolute bottom-6 left-6 right-6 text-white">
                 <span className="text-[11px] font-mono tracking-widest uppercase text-[#E5C879] block mb-1">
@@ -43,16 +143,16 @@ export const Scene02Essence: React.FC = () => {
             </div>
 
             {/* Micro Strip: Proof & Pillars */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2">
-              <div className="p-4 rounded-xl bg-white border border-[#E8E1D2]">
+            <div ref={statsRef} className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2">
+              <div className="p-4 rounded-xl bg-white border border-[#E8E1D2] shadow-xs">
                 <span className="block text-xl font-serif font-semibold text-[#123524]">Boutique</span>
                 <span className="block text-xs text-[#57685F] mt-0.5">Atendimento personalizado e turmas com foco discente</span>
               </div>
-              <div className="p-4 rounded-xl bg-white border border-[#E8E1D2]">
+              <div className="p-4 rounded-xl bg-white border border-[#E8E1D2] shadow-xs">
                 <span className="block text-xl font-serif font-semibold text-[#123524]">Prática</span>
                 <span className="block text-xs text-[#57685F] mt-0.5">Vivência real e aplicação desde os primeiros períodos</span>
               </div>
-              <div className="col-span-2 sm:col-span-1 p-4 rounded-xl bg-white border border-[#E8E1D2]">
+              <div className="col-span-2 sm:col-span-1 p-4 rounded-xl bg-white border border-[#E8E1D2] shadow-xs">
                 <span className="block text-xl font-serif font-semibold text-[#123524]">Amazônica</span>
                 <span className="block text-xs text-[#57685F] mt-0.5">Compromisso com o território e bioeconomia regional</span>
               </div>
@@ -60,7 +160,7 @@ export const Scene02Essence: React.FC = () => {
           </div>
 
           {/* Right Column (5 cols): Narrative Prose & Secondary Visual Accent */}
-          <div className="lg:col-span-5 space-y-8">
+          <div ref={textColRef} className="lg:col-span-5 space-y-8 will-change-transform">
             <div className="space-y-4 text-[#47574E] text-base leading-relaxed">
               <p className="first-letter:text-5xl first-letter:font-serif first-letter:font-bold first-letter:float-left first-letter:mr-3 first-letter:text-[#123524]">
                 A FAUNA une rigor acadêmico, visão de futuro e compromisso indissociável com o lugar onde nasceu. Mais do que diplomar profissionais, somos uma instituição calculada para transformar conhecimento em possibilidades concretas.
@@ -71,7 +171,10 @@ export const Scene02Essence: React.FC = () => {
             </div>
 
             {/* Secondary Visual Accent Box */}
-            <div className="p-6 rounded-2xl bg-[#123524] text-[#FAF8F5] relative overflow-hidden">
+            <div
+              ref={accentCardRef}
+              className="p-6 rounded-2xl bg-[#123524] text-[#FAF8F5] relative overflow-hidden shadow-md"
+            >
               <div className="relative z-10 space-y-3">
                 <span className="text-xs uppercase tracking-widest text-[#C9A44C] font-mono block">
                   POSICIONAMENTO INSTITUCIONAL

@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Crown, Sparkles, HeartHandshake, Briefcase, Award, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useGSAPScene } from '../../hooks/useGSAPScene';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 export const Scene08Experience: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const spotlightRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = useReducedMotion();
 
   const experiences = [
     {
@@ -13,6 +18,7 @@ export const Scene08Experience: React.FC = () => {
       subtitle: 'Reconhecimento de Alto Padrão',
       desc: 'Anualmente, a FAUNA celebra os melhores estudantes de cada turma com uma solenidade de gala no melhor estilo Hollywood. Os formandos de maior destaque acadêmico são agraciados com uma joia exclusiva de ouro e rubi.',
       highlight: 'Anel exclusivo em ouro e rubi',
+      image: '/assets/fauna-photo-5-0dhzBddg.jpg',
       actionText: 'Conheça o regulamento do Mérito'
     },
     {
@@ -22,6 +28,7 @@ export const Scene08Experience: React.FC = () => {
       subtitle: 'Rito de Passagem Acadêmico',
       desc: 'Na área da saúde, os alunos recebem o Manto Oficial em um evento solene que formaliza seu compromisso ético com a vida e a ciência. Além disso, a FAUNA fornece kits de instrumental de alto padrão para as práticas clínicas.',
       highlight: 'Compromisso ético e instrumental de ponta',
+      image: '/assets/fauna-photo-4-Bot9x6Jv.jpg',
       actionText: 'Saiba mais sobre a solenidade'
     },
     {
@@ -31,6 +38,7 @@ export const Scene08Experience: React.FC = () => {
       subtitle: 'Conexão Direta com a Indústria',
       desc: 'Nossa agência interna de carreiras e estágios conecta os alunos de Barcarena às maiores empresas do polo industrial, portos, operadoras de saúde e organizações socioambientais do Pará.',
       highlight: 'Empregabilidade e rede de estágios',
+      image: '/assets/fauna-photo-6-R9k6EWW6.jpg',
       actionText: 'Ver oportunidades de carreira'
     },
     {
@@ -40,14 +48,32 @@ export const Scene08Experience: React.FC = () => {
       subtitle: 'Ações Sociais e Comunitárias',
       desc: 'A extensão universitária na prática. Campanhas de saúde preventiva, orientação jurídica gratuita e ações solidárias que beneficiam comunidades ribeirinhas e famílias em Barcarena.',
       highlight: 'Impacto social real no território',
+      image: '/assets/fauna-photo-7-DCo2z3Ij.jpg',
       actionText: 'Conheça nossos projetos sociais'
     }
   ];
 
   const current = experiences[selectedTab];
 
+  useGSAPScene(() => {
+    if (reducedMotion || !containerRef.current) return;
+
+    import('../../utils/motionConfig').then(({ gsap }) => {
+      if (spotlightRef.current) {
+        gsap.fromTo(
+          spotlightRef.current,
+          { opacity: 0.85, y: 8 },
+          { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }
+        );
+      }
+    });
+  }, containerRef, [selectedTab]);
+
   return (
-    <section className="py-28 bg-[#FAF8F5] text-[#1D2B24]">
+    <section
+      ref={containerRef}
+      className="py-28 bg-[#FAF8F5] text-[#1D2B24]"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
@@ -66,7 +92,7 @@ export const Scene08Experience: React.FC = () => {
           </p>
         </div>
 
-        {/* Interactive Experience Canvas */}
+        {/* Interactive Experience Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
           {/* Navigation List (5 cols) */}
@@ -80,7 +106,7 @@ export const Scene08Experience: React.FC = () => {
                   onClick={() => setSelectedTab(idx)}
                   className={`w-full text-left p-5 rounded-2xl border transition-all duration-300 flex items-center justify-between gap-4 ${
                     isSelected
-                      ? 'bg-[#123524] text-white border-[#123524] shadow-md'
+                      ? 'bg-[#123524] text-white border-[#123524] shadow-md transform -translate-x-1'
                       : 'bg-white text-[#1D2B24] border-[#E5DFD3] hover:border-[#C9A44C]'
                   }`}
                 >
@@ -109,8 +135,11 @@ export const Scene08Experience: React.FC = () => {
             })}
           </div>
 
-          {/* Focused Editorial Spotlight Box (7 cols) */}
-          <div className="lg:col-span-7 bg-[#FAF5EE] border border-[#E5DFD3] rounded-3xl p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden shadow-xs">
+          {/* Focused Editorial Spotlight Box (7 cols) with Real Image Accent */}
+          <div
+            ref={spotlightRef}
+            className="lg:col-span-7 bg-[#FAF5EE] border border-[#E5DFD3] rounded-3xl p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden shadow-xs"
+          >
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-xs font-mono text-[#8A6D3B] uppercase">
                 <span>0{selectedTab + 1} / DESTAQUE</span>
@@ -129,9 +158,21 @@ export const Scene08Experience: React.FC = () => {
               <p className="text-sm sm:text-base text-[#47574E] leading-relaxed font-light">
                 {current.desc}
               </p>
+
+              {/* Photo Preview Accent */}
+              <div className="relative h-44 rounded-2xl overflow-hidden bg-black/10 border border-[#E5DFD3]">
+                <img
+                  src={current.image}
+                  alt={current.title}
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/assets/fauna-photo-2-DMa52OaB.jpg';
+                  }}
+                />
+              </div>
             </div>
 
-            <div className="pt-8 border-t border-[#E5DFD3] flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="pt-6 border-t border-[#E5DFD3] flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
               <span className="text-xs text-[#697A72]">
                 Tradição viva da FAUNA presente na vida dos estudantes.
               </span>
