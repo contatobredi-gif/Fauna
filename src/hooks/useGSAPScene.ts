@@ -16,16 +16,19 @@ export function useGSAPScene(
   callbackRef.current = callback;
 
   useEffect(() => {
-    if (reducedMotion || !scopeRef.current) return;
+    const scope = scopeRef.current;
+    if (reducedMotion || !scope) return;
 
-    // Create GSAP context scoped to current component container
-    const ctx = gsap.context(() => {
+    // Create GSAP context scoped to current component container.
+    // Use the context instance provided by GSAP (not the outer const),
+    // because the factory runs synchronously during assignment.
+    const ctx = gsap.context((self) => {
       try {
-        callbackRef.current(ctx);
+        callbackRef.current(self);
       } catch (err) {
         console.warn('GSAP animation scene execution error caught:', err);
       }
-    }, scopeRef.current);
+    }, scope);
 
     return () => {
       try {
@@ -34,5 +37,7 @@ export function useGSAPScene(
         console.warn('GSAP revert error caught:', err);
       }
     };
+    // Scene-specific deps are passed by callers; scope is a ref.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion, ...deps]);
 }

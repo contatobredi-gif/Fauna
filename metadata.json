@@ -1,6 +1,4 @@
 {
   "name": "FAUNA 3.0 — Faculdade Universo da Amazônia",
-  "description": "Website institucional da FAUNA — Faculdade Universo da Amazônia em Barcarena, Pará. Da Amazônia para o mundo: formação de excelência, raízes amazônicas e horizontes sem fronteiras.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "description": "Website institucional da FAUNA — Faculdade Universo da Amazônia em Barcarena, Pará."
 }
