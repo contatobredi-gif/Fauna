@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* Official FAUNA Approved Palette Tokens */
+    --fauna-forest: #123524;
+    --fauna-forest-dark: #0a1f15;
+    --fauna-forest-deep: #06150e;
+    --fauna-navy: #0e222e;
+    --fauna-gold: #c9a44c;
+    --fauna-gold-light: #e5c879;
+    --fauna-gold-dark: #9e7b2b;
+    --fauna-sand: #faf7f2;
+    --fauna-sand-warm: #f4eee3;
+    --fauna-mist: #e9e3d5;
+    --fauna-urucum: #9c3b23;
+    --fauna-graphite: #1d2b24;
+    --fauna-muted: #57685f;
+    --fauna-border: rgba(18, 53, 36, 0.12);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--fauna-sand);
+    color: var(--fauna-graphite);
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-serif-display {
+    font-family: var(--font-display);
+  }
+}
+
+/* Smooth scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f4eee3;
+}
+::-webkit-scrollbar-thumb {
+  background: #123524;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0a1f15;
+}
+
+/* Custom utility classes */
+.font-display {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-body {
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Grain texture overlay */
+.bg-grain {
+  background-image: radial-gradient(rgba(18, 53, 36, 0.04) 1px, transparent 0);
+  background-size: 24px 24px;
+}
