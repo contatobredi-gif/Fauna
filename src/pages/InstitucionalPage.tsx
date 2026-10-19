@@ -1,6 +1,6 @@
 import React from 'react';
 import { FileText, Compass } from 'lucide-react';
-import { TIMELINE_HISTORY } from '../data/content';
+import { INSTITUTIONAL_COPY, TIMELINE_HISTORY } from '../data/content';
 import { ValidationNotice } from '../components/ui/ValidationNotice';
 import { useHashTab } from '../hooks/useHashTab';
 
@@ -17,19 +17,11 @@ const INSTITUCIONAL_TABS: { tab: InstitucionalTab; hashes: string[]; label: stri
 export const InstitucionalPage: React.FC = () => {
   const { activeTab, setActiveTab } = useHashTab<InstitucionalTab>(INSTITUCIONAL_TABS, 'historia');
 
-  const cpaReports = [
-    { title: 'Projeto de Aplicação da Autoavaliação Institucional 2025', date: '2025', status: 'Arquivo digital em atualização' },
-    { title: 'Plano de Ação FAUNA 2025', date: '2025', status: 'Arquivo digital em atualização' },
-    { title: 'Relatório Integral CPA 2024', date: '2024', status: 'Arquivo digital em atualização' },
-    { title: 'Relatório CPA FAUNA 2023.2', date: '2023', status: 'Arquivo digital em atualização' },
-    { title: 'Síntese Trienal CPA (2019-2021)', date: '2021', status: 'Arquivo digital em atualização' }
-  ];
-
-  const editaisList = [
-    { id: 'editais', title: 'Edital do Processo Seletivo Vestibular — Polo Barcarena 2026.1', type: 'Vestibular', status: 'Publicação oficial em consolidação' },
-    { id: 'regimento', title: 'Regimento Geral da Faculdade Universo da Amazônia', type: 'Institucional', status: 'Arquivo digital em atualização' },
-    { id: 'normas', title: 'Manual do Aluno e Guia de Convivência Acadêmica', type: 'Normas e manuais', status: 'Arquivo digital em atualização' },
-    { id: 'regulamentos', title: 'Regulamento das Atividades Complementares e Extensão', type: 'Regulamentos e programas', status: 'Arquivo digital em atualização' }
+  const documentSlots = [
+    { id: 'editais', title: 'Editais de processos seletivos', type: 'Editais', status: 'Arquivo ainda não publicado neste site' },
+    { id: 'regimento', title: 'Regimento Geral da Faculdade Universo da Amazônia', type: 'Institucional', status: 'Arquivo ainda não publicado neste site' },
+    { id: 'normas', title: 'Normas e manuais acadêmicos', type: 'Normas e manuais', status: 'Arquivo ainda não publicado neste site' },
+    { id: 'regulamentos', title: 'Regulamentos e programas', type: 'Regulamentos e programas', status: 'Arquivo ainda não publicado neste site' }
   ];
 
   return (
@@ -46,7 +38,7 @@ export const InstitucionalPage: React.FC = () => {
               A história, os valores e a governança da FAUNA.
             </h1>
             <p className="text-sm sm:text-base text-[#B2C5BC] font-light leading-relaxed">
-              Compromisso com o desenvolvimento socioeconômico e ambiental do Pará através de uma formação boutique, personalizada e transformadora.
+              {INSTITUTIONAL_COPY.about} Este site apresenta a instituição com foco no recorte de Barcarena, sem confundir a história da IES com a implantação local.
             </p>
           </div>
         </div>
@@ -88,20 +80,21 @@ export const InstitucionalPage: React.FC = () => {
                     MENSAGEM DA DIRETORIA
                   </span>
                   <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#123524]">
-                    Um divisor de águas no ensino superior da Amazônia.
+                    Uma faculdade estrategicamente calculada para inspirar seus alunos.
                   </h2>
-                  <p className="first-letter:text-4xl first-letter:font-serif first-letter:font-bold first-letter:float-left first-letter:mr-2 first-letter:text-[#123524]">
-                    O ensino superior no Pará iniciou um processo revolucionário com a criação da FAUNA. Com conceito totalmente diferenciado, a instituição vai muito além da diplomação formal de pessoas: é uma faculdade estrategicamente desenhada para inspirar seus alunos.
-                  </p>
-                  <p>
-                    Um processo contínuo de transformação e movimento, que garante uma experiência acolhedora, em ambiente harmonioso e elegante, idealizado para ser a extensão da casa de cada estudante. Na FAUNA, não existe anonimato: nossos alunos têm identidade, DNA, com nome e sobrenome.
-                  </p>
-                  <p>
-                    Para alcançar a excelência como uma Faculdade Boutique no Norte, nossa essência não busca apenas volume ou escala impessoal, mas ofertar formação sob medida, capacitada para fazer a diferença real no mercado de trabalho.
-                  </p>
+                  {INSTITUTIONAL_COPY.directorParagraphs.map((paragraph, index) => (
+                    <p
+                      key={paragraph.slice(0, 32)}
+                      className={index === 0
+                        ? 'first-letter:text-4xl first-letter:font-serif first-letter:font-bold first-letter:float-left first-letter:mr-2 first-letter:text-[#123524]'
+                        : undefined}
+                    >
+                      {paragraph}
+                    </p>
+                  ))}
                   <div className="pt-4 border-t border-[#F0ECE1]">
                     <strong className="text-[#123524] block font-serif text-base">Fabrício Peixoto do Nascimento</strong>
-                    <span className="text-xs text-[#697A72]">Diretoria Geral & Mantenedora F P do Nascimento EIRELI</span>
+                    <span className="text-xs text-[#697A72]">Diretoria Geral · Faculdade Universo da Amazônia</span>
                   </div>
                 </div>
 
@@ -110,15 +103,19 @@ export const InstitucionalPage: React.FC = () => {
                   <div className="space-y-3 text-xs text-[#57685F]">
                     <div>
                       <strong className="text-[#123524] block mb-0.5">Missão</strong>
-                      <span>Contribuir para o desenvolvimento socioeconômico, cultural e ambiental através de ensino, pesquisa e extensão indissociáveis, com inovação e sustentabilidade.</span>
+                      <span>{INSTITUTIONAL_COPY.mission}</span>
                     </div>
                     <div>
                       <strong className="text-[#123524] block mb-0.5">Visão</strong>
-                      <span>Ser referência no Pará como centro de formação ética, meritocrática e técnica para os desafios contemporâneos da Amazônia.</span>
+                      <span>{INSTITUTIONAL_COPY.vision}</span>
                     </div>
                     <div>
                       <strong className="text-[#123524] block mb-0.5">Valores</strong>
-                      <span>Inovação profissional, responsabilidade socioambiental, valorização das raízes amazônicas, meritocracia e ética humana.</span>
+                      <ul className="list-disc pl-4 space-y-1">
+                        {INSTITUTIONAL_COPY.values.map((value) => (
+                          <li key={value}>{value}</li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 </div>
@@ -132,8 +129,11 @@ export const InstitucionalPage: React.FC = () => {
                   NOSSA TRAJETÓRIA
                 </span>
                 <h3 className="text-2xl sm:text-3xl font-serif font-bold text-[#123524]">
-                  Uma história de crescimento contínuo (2018–2026)
+                  Uma história de crescimento
                 </h3>
+                <p className="text-xs text-[#57685F] mt-2 leading-relaxed">
+                  Os marcos de 2018 a 2022 descrevem a trajetória da instituição. O recorte de Barcarena aparece apenas no marco mais recente, ainda em divulgação regulatória.
+                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -150,7 +150,7 @@ export const InstitucionalPage: React.FC = () => {
             </div>
 
             <ValidationNotice
-              text="As portarias específicas autorizativas das instalações físicas de Barcarena estão em publicação gradual junto ao Ministério da Educação."
+              text="A história 2018–2022 é da Faculdade Universo da Amazônia como instituição. Não descreve instalações, turmas ou autorizações já confirmadas para Barcarena."
             />
           </div>
         )}
@@ -160,14 +160,15 @@ export const InstitucionalPage: React.FC = () => {
           <div className="space-y-12 animate-fade-in">
             <div id="metodo-saber-mais" className="bg-white rounded-3xl border border-[#E5DFD3] p-8 sm:p-12 shadow-xs space-y-6 scroll-mt-28">
               <span className="text-xs font-mono uppercase tracking-widest text-[#8A6D3B] block">
-                METODOLOGIA PEDAGÓGICA PROPRIETÁRIA
+                METODOLOGIA INSTITUCIONAL
               </span>
               <h2 className="text-3xl font-serif font-bold text-[#123524]">
-                O pioneirismo pedagógico como marca registrada: Método Saber Mais.
+                Método Saber Mais
               </h2>
               
               <p className="text-sm text-[#47574E] leading-relaxed max-w-3xl">
-                Nesse universo de inovação acadêmica, a FAUNA criou o <strong>Saber Mais</strong>, uma metodologia exclusiva que nos consolida como um agente transformador de sonhos em realidade por meio da educação de excelência.
+                <strong className="text-[#123524]">Metodologia. </strong>
+                {INSTITUTIONAL_COPY.saberMais.methodology}
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
@@ -175,9 +176,9 @@ export const InstitucionalPage: React.FC = () => {
                   <div className="w-10 h-10 rounded-xl bg-[#123524] text-[#E5C879] flex items-center justify-center font-bold">
                     01
                   </div>
-                  <h4 className="font-serif text-lg font-bold text-[#123524]">Prática desde o Início</h4>
+                  <h4 className="font-serif text-lg font-bold text-[#123524]">Conceito</h4>
                   <p className="text-xs text-[#57685F] leading-relaxed">
-                    O contato com simulações, estudos de caso e vivência no território ocorre desde o primeiro semestre letivo.
+                    {INSTITUTIONAL_COPY.saberMais.concept}
                   </p>
                 </div>
 
@@ -185,9 +186,9 @@ export const InstitucionalPage: React.FC = () => {
                   <div className="w-10 h-10 rounded-xl bg-[#123524] text-[#E5C879] flex items-center justify-center font-bold">
                     02
                   </div>
-                  <h4 className="font-serif text-lg font-bold text-[#123524]">Problemas Reais do Pará</h4>
+                  <h4 className="font-serif text-lg font-bold text-[#123524]">Experiência de aprendizagem</h4>
                   <p className="text-xs text-[#57685F] leading-relaxed">
-                    Estudo de casos contextualizados com as cadeias portuárias, ambientais, industriais e de saúde do Baixo Tocantins.
+                    {INSTITUTIONAL_COPY.saberMais.experience}
                   </p>
                 </div>
 
@@ -195,12 +196,17 @@ export const InstitucionalPage: React.FC = () => {
                   <div className="w-10 h-10 rounded-xl bg-[#123524] text-[#E5C879] flex items-center justify-center font-bold">
                     03
                   </div>
-                  <h4 className="font-serif text-lg font-bold text-[#123524]">Mentoria Docente Estreita</h4>
+                  <h4 className="font-serif text-lg font-bold text-[#123524]">Diferenciais</h4>
                   <p className="text-xs text-[#57685F] leading-relaxed">
-                    Professores mestres e doutores que orientam projetos individualizados e promovem o desenvolvimento de liderança discente.
+                    {INSTITUTIONAL_COPY.saberMais.differentials}
                   </p>
                 </div>
               </div>
+
+              <p className="text-xs text-[#57685F] leading-relaxed max-w-3xl pt-2">
+                <strong className="text-[#123524]">Aplicação à formação acadêmica. </strong>
+                {INSTITUTIONAL_COPY.saberMais.application}
+              </p>
             </div>
           </div>
         )}
@@ -217,35 +223,20 @@ export const InstitucionalPage: React.FC = () => {
               </h2>
               
               <div className="text-sm text-[#47574E] leading-relaxed space-y-4 max-w-4xl">
-                <p>
-                  A Comissão Própria de Avaliação (CPA) é formada democraticamente por representantes dos docentes, estudantes, técnico-administrativos e membros da sociedade civil organizada, em consonância com as diretrizes do Sistema Nacional de Avaliação da Educação Superior (SINAES).
-                </p>
-                <p>
-                  Sua finalidade central é coordenar os processos de autoavaliação contínua da instituição, identificar oportunidades de melhoria, aumentar a consciência pedagógica e prestar contas de forma transparente a toda a comunidade acadêmica.
-                </p>
+                <p>{INSTITUTIONAL_COPY.cpaPresentation}</p>
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-[#123524] mb-2">Finalidade e objetivos</h3>
+                  <p>{INSTITUTIONAL_COPY.cpaPurpose}</p>
+                </div>
               </div>
 
-              {/* Documentos e Relatórios CPA */}
-              <div className="pt-6 border-t border-[#F0ECE1]">
-                <h4 className="text-base font-serif font-bold text-[#123524] mb-4">
-                  Relatórios e Planos de Autoavaliação Institucional
+              <div className="pt-6 border-t border-[#F0ECE1] space-y-3">
+                <h4 className="text-base font-serif font-bold text-[#123524]">
+                  Relatórios de autoavaliação
                 </h4>
-                <div className="divide-y divide-[#EDE6D8] border border-[#E5DFD3] rounded-2xl overflow-hidden bg-[#FAF8F5]">
-                  {cpaReports.map((r) => (
-                    <div key={r.title} className="p-4 flex items-center justify-between gap-4 hover:bg-white transition-colors">
-                      <div className="flex items-center gap-3">
-                        <FileText className="w-5 h-5 text-[#C9A44C] shrink-0" />
-                        <div>
-                          <span className="text-xs font-semibold text-[#123524] block">{r.title}</span>
-                          <span className="text-[11px] text-[#697A72]">Ciclo Avaliativo {r.date}</span>
-                        </div>
-                      </div>
-                      <span className="text-xs text-[#123524] font-medium bg-[#F2ECE1] px-3 py-1 rounded-md">
-                        {r.status}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                <p className="text-xs text-[#57685F] leading-relaxed max-w-3xl">
+                  A instituição prevê a publicação de relatórios e planos da CPA. Neste site ainda não há arquivos digitais disponíveis para consulta. Títulos sem documento correspondente não são listados como se pudessem ser baixados.
+                </p>
               </div>
             </div>
           </div>
@@ -263,16 +254,20 @@ export const InstitucionalPage: React.FC = () => {
               </h2>
               
               <div className="text-sm text-[#47574E] leading-relaxed space-y-4 max-w-4xl">
-                <p>
-                  A sua privacidade é um valor inegociável para a FAUNA. É política oficial da <strong>F P do Nascimento EIRELI</strong>, mantenedora da Faculdade Universo da Amazônia, respeitar a sua privacidade e tratar os dados pessoais com transparência, sigilo e segurança jurídica.
-                </p>
-                <p>
-                  Coletamos informações pessoais estritamente necessárias para a prestação de serviços educacionais, cumprimento de obrigações legais junto ao MEC, processos seletivos e emissão de documentação acadêmica oficial.
-                </p>
+                <p>{INSTITUTIONAL_COPY.lgpdIntro}</p>
+                {INSTITUTIONAL_COPY.lgpdBody.map((paragraph) => (
+                  <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+                ))}
                 <div className="p-5 rounded-2xl bg-[#FAF5EE] border border-[#E5DFD3] text-xs text-[#57685F] space-y-2">
-                  <strong className="text-[#123524] block text-sm">Canal do Encarregado de Dados (DPO)</strong>
-                  <p>Para exercer seus direitos de confirmação de dados, retificação, eliminação ou esclarecimentos, contate nosso setor de governança institucional através do portal de atendimento.</p>
+                  <strong className="text-[#123524] block text-sm">Política de cookies da F P do Nascimento EIRELI</strong>
+                  <p>{INSTITUTIONAL_COPY.cookies.what}</p>
+                  <p>{INSTITUTIONAL_COPY.cookies.how}</p>
+                  <p>{INSTITUTIONAL_COPY.cookies.disable}</p>
+                  <p>{INSTITUTIONAL_COPY.cookies.effective}</p>
                 </div>
+                <p className="text-xs text-[#8A5A2B]">
+                  O nome do encarregado de dados (DPO) só será publicado quando a Direção confirmar o responsável vigente para este canal.
+                </p>
               </div>
             </div>
           </div>
@@ -290,11 +285,11 @@ export const InstitucionalPage: React.FC = () => {
               </h2>
               
               <p className="text-sm text-[#47574E] leading-relaxed">
-                Consulte os documentos oficiais que regem o funcionamento acadêmico, processos de vestibular e regulamentos de bolsas e programas.
+                Esta página reserva o espaço dos documentos oficiais da Faculdade Universo da Amazônia. Enquanto os arquivos não forem publicados, os itens permanecem como categorias institucionais, sem download.
               </p>
 
               <div className="divide-y divide-[#EDE6D8] border border-[#E5DFD3] rounded-2xl overflow-hidden bg-[#FAF8F5]">
-                {editaisList.map((ed) => (
+                {documentSlots.map((ed) => (
                   <div key={ed.title} id={ed.id} className="p-4.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white transition-colors scroll-mt-28">
                     <div className="flex items-center gap-3">
                       <FileText className="w-5 h-5 text-[#123524] shrink-0" />

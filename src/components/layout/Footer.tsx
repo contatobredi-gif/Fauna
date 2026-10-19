@@ -22,8 +22,7 @@ export const Footer: React.FC = () => {
             </Link>
 
             <p className="text-xs text-[#95AAA0] leading-relaxed max-w-sm">
-              Formação de excelência com raízes na Amazônia e horizontes sem fronteiras.
-              Conectamos ensino, pesquisa e extensão ao futuro profissional e sustentável de Barcarena e do Pará.
+              Conectando a Amazônia ao mundo. Somos uma Instituição de Ensino comprometida com o desenvolvimento regional e a sustentabilidade formando profissionais de excelência para o mercado de trabalho.
             </p>
 
             <div className="pt-2 flex items-center gap-2 text-xs text-[#C9A44C]">
@@ -79,7 +78,7 @@ export const Footer: React.FC = () => {
               © {new Date().getFullYear()} FAUNA — Faculdade Universo da Amazônia. Mantenedora: F P do Nascimento EIRELI.
             </p>
             <p className="text-[10px] text-[#61776C]">
-              Credenciamento MEC sob regulação oficial. As diretrizes e portarias do Polo Barcarena estão sendo divulgadas conforme calendário do Ministério da Educação.
+              Atos regulatórios e portarias aplicáveis ao polo Barcarena serão divulgados quando os documentos oficiais forem publicados.
             </p>
           </div>
 

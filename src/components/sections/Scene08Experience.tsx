@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { gsap } from '../../utils/motionConfig';
+import { SectionEyebrow } from '../ui/SectionEyebrow';
 
 export const Scene08Experience: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
@@ -17,8 +18,8 @@ export const Scene08Experience: React.FC = () => {
       icon: Crown,
       title: 'Premiação Mérito FAUNA',
       subtitle: 'Reconhecimento de Alto Padrão',
-      desc: 'Anualmente, a FAUNA celebra os melhores estudantes de cada turma com uma solenidade de gala no melhor estilo Hollywood. Os formandos de maior destaque acadêmico são agraciados com uma joia exclusiva de ouro e rubi.',
-      highlight: 'Anel exclusivo em ouro e rubi',
+      desc: 'Tradição institucional recuperada: o Mérito FAUNA é uma premiação anual aos melhores de cada curso, com homenagem em solenidade. A realização do rito em Barcarena depende de calendário oficial ainda não publicado.',
+      highlight: 'Premiação anual aos melhores de cada curso',
       image: '/assets/fauna-photo-5-0dhzBddg.jpg',
       actionText: 'Conheça o regulamento do Mérito'
     },
@@ -27,7 +28,7 @@ export const Scene08Experience: React.FC = () => {
       icon: Award,
       title: 'Solenidade do Manto & Kits Oficiais',
       subtitle: 'Rito de Passagem Acadêmico',
-      desc: 'Na área da saúde, os alunos recebem o Manto Oficial em um evento solene que formaliza seu compromisso ético com a vida e a ciência. Além disso, a FAUNA fornece kits de instrumental de alto padrão para as práticas clínicas.',
+      desc: 'Tradição institucional da IES: solenidades do Manto Oficial e entrega de kits acadêmicos de Enfermagem e Odontologia. O calendário desses ritos em Barcarena ainda não foi publicado.',
       highlight: 'Compromisso ético e instrumental de ponta',
       image: '/assets/fauna-photo-4-Bot9x6Jv.jpg',
       actionText: 'Saiba mais sobre a solenidade'
@@ -37,7 +38,7 @@ export const Scene08Experience: React.FC = () => {
       icon: Briefcase,
       title: 'Talentos S/A & Carreiras',
       subtitle: 'Conexão Direta com a Indústria',
-      desc: 'Nossa agência interna de carreiras e estágios conecta os alunos de Barcarena às maiores empresas do polo industrial, portos, operadoras de saúde e organizações socioambientais do Pará.',
+      desc: 'Programa institucional de capacitação e inserção profissional (Profissional S/A / Talentos S/A), desenvolvido no curso de Recursos Humanos da FAUNA. Convênios de Barcarena permanecem em formalização.',
       highlight: 'Empregabilidade e rede de estágios',
       image: '/assets/fauna-photo-6-R9k6EWW6.jpg',
       actionText: 'Ver oportunidades de carreira'
@@ -47,7 +48,7 @@ export const Scene08Experience: React.FC = () => {
       icon: HeartHandshake,
       title: 'Projeto Acolher',
       subtitle: 'Ações Sociais e Comunitárias',
-      desc: 'A extensão universitária na prática. Campanhas de saúde preventiva, orientação jurídica gratuita e ações solidárias que beneficiam comunidades ribeirinhas e famílias em Barcarena.',
+      desc: 'O projeto institucional “Acolher – Ação que Transforma” envolve direção, professores, estudantes e parceiros em ações de documentação, saúde, odontologia, jurídico e palestras. A agenda específica de Barcarena ainda não foi publicada.',
       highlight: 'Impacto social real no território',
       image: '/assets/fauna-photo-7-DCo2z3Ij.jpg',
       actionText: 'Conheça nossos projetos sociais'
@@ -77,11 +78,9 @@ export const Scene08Experience: React.FC = () => {
         
         {/* Header */}
         <div className="max-w-3xl mb-14">
-          <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-[#8A6D3B] uppercase mb-3">
+          <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-[#C9A44C]" />
-            <span>08 / EXPERIÊNCIA FAUNA</span>
-            <span>—</span>
-            <span>VIVÊNCIA ALÉM DA SALA</span>
+            <SectionEyebrow className="mb-0">Experiência FAUNA</SectionEyebrow>
           </div>
           <h2 className="text-3xl sm:text-5xl font-serif font-normal text-[#123524] leading-tight text-balance">
             A faculdade acontece muito além da sala de aula.
@@ -140,9 +139,7 @@ export const Scene08Experience: React.FC = () => {
             className="lg:col-span-7 bg-[#FAF5EE] border border-[#E5DFD3] rounded-3xl p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden shadow-xs"
           >
             <div className="space-y-6">
-              <div className="flex items-center gap-2 text-xs font-mono text-[#8A6D3B] uppercase">
-                <span>0{selectedTab + 1} / DESTAQUE</span>
-                <span>·</span>
+              <div className="flex items-center gap-2 text-xs text-[#8A6D3B] uppercase tracking-wider">
                 <span>{current.subtitle}</span>
               </div>
 
@@ -163,6 +160,8 @@ export const Scene08Experience: React.FC = () => {
                 <img
                   src={current.image}
                   alt={current.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = '/assets/fauna-photo-2-DMa52OaB.jpg';

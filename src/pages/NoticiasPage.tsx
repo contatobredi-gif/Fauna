@@ -16,10 +16,10 @@ export const NoticiasPage: React.FC = () => {
               <span>IMPRENSA & COMUNICAÇÃO INSTITUCIONAL</span>
             </div>
             <h1 className="text-3xl sm:text-5xl font-serif font-normal text-white leading-tight">
-              Notícias, Artigos & Eventos
+              Memória institucional
             </h1>
             <p className="text-sm sm:text-base text-[#B2C5BC] font-light leading-relaxed">
-              Acompanhe as atualizações institucionais, eventos acadêmicos e avanços do novo polo da FAUNA em Barcarena.
+              Registros históricos da Faculdade Universo da Amazônia, com data e fonte identificadas. Eventos de outras unidades e matérias sem texto completo não são republicados como agenda de Barcarena.
             </p>
           </div>
         </div>
@@ -74,7 +74,7 @@ export const NoticiasPage: React.FC = () => {
                   onClick={() => setActiveArticle(article)}
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#123524] group-hover:text-[#C9A44C] transition-colors"
                 >
-                  <span>Ler matéria completa</span>
+                  <span>Ler registro</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -121,15 +121,9 @@ export const NoticiasPage: React.FC = () => {
             </div>
 
             <div className="space-y-4 text-sm text-[#47574E] leading-relaxed">
-              <p className="font-medium text-base text-[#123524]">
-                {activeArticle.excerpt}
-              </p>
-              <p>
-                A Faculdade Universo da Amazônia tem como compromisso essencial a transparência institucional com sua comunidade discente e com a sociedade do Pará.
-              </p>
-              <p>
-                As informações oficiais, editais de processo seletivo e comunicados são sempre publicados com respaldo da comissão acadêmica e da diretoria de ensino. Para mais informações ou esclarecimento de dúvidas, utilize nossa central de atendimento.
-              </p>
+              {(activeArticle.fullText ?? activeArticle.excerpt).split('\n\n').map((block) => (
+                <p key={block.slice(0, 48)}>{block}</p>
+              ))}
             </div>
 
             <div className="pt-6 mt-6 border-t border-[#E5DFD3] flex justify-end">
@@ -137,7 +131,7 @@ export const NoticiasPage: React.FC = () => {
                 onClick={() => setActiveArticle(null)}
                 className="px-5 py-2.5 bg-[#123524] text-white text-xs font-semibold rounded-lg hover:bg-[#0A1F15]"
               >
-                Fechar Artigo
+                Fechar
               </button>
             </div>
           </div>

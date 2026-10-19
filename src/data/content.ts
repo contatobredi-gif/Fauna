@@ -41,7 +41,66 @@ export interface NewsItem {
   readTime: string;
   image: string;
   status: 'institucional' | 'demonstrativo';
+  fullText?: string;
 }
+
+/** Textos institucionais recuperados do site anterior (fauna-frontend-six). */
+export const INSTITUTIONAL_COPY = {
+  slogan: 'Conectando a Amazônia ao mundo',
+  about:
+    'Somos uma Instituição de Ensino comprometida com o desenvolvimento regional e a sustentabilidade formando profissionais de excelência para o mercado de trabalho.',
+  mission:
+    'Contribuir para o desenvolvimento socioeconômico, cultural e ambiental da sociedade, a partir da oferta de cursos superiores de graduação e de pós-graduação, articulando de maneira indissociável o Ensino, a Pesquisa e a Extensão, em uma perspectiva de formação centrada na integração entre o empreendedorismo, a inovação e a sustentabilidade.',
+  vision:
+    'Ser uma importante instituição de ensino do Estado do Pará, comprometida com o desenvolvimento regional e a sustentabilidade formando profissionais de excelência para o mercado de trabalho.',
+  values: [
+    'Inovação nas áreas profissionais;',
+    'Sustentabilidade socioeconômica e ambiental;',
+    'Valorização da cultura regional e brasileira;',
+    'Formação centrada na ética e na meritocracia;',
+    'Seres humanos comprometidos, respeitados e valorizados;',
+    'Egressos com consciência acerca de suas histórias e da possibilidade de transformação frente a si e ao próximo.',
+  ],
+  directorParagraphs: [
+    'Há quatro anos, ensino superior no Pará iniciava um processo revolucionário com o surgimento da FaUnA. Com conceito totalmente diferenciado, algo jamais vivenciado no universo da educação, a instituição vai muito além da diplomação de pessoas. É uma faculdade estrategicamente calculada para inspirar seus alunos, ou melhor, seus FAUNA, como são conhecidos.',
+    'Um processo contínuo de transformação e movimento, que garante aos alunos uma experiência única, em ambiente aconchegante, harmonioso e elegante, algo idealizado para ser a extensão de suas casas. Na FaUnA, existe acolhimento e atendimento personalizado. Nossos FAUNA têm identidade, DNA, com nome e sobrenome.',
+    'Para alcançar a excelência como Faculdade Boutique na Região Norte, a FaUnA criou sua própria expertise. A essência do nosso negócio não é quantidade ou volume, tampouco, tamanho. É ofertar produtos exclusivos, individualizados, como se fossem feitos à mão para atender e fazer a diferença no mercado de trabalho.',
+    'Nossos FAUNA são treinados e incorporados ao empreendedorismo, com princípios, valores, ética, postura profissional, conhecimento teórico, técnico, de valorização da carreira e inovação de quem vivencia a prática desde o primeiro dia de aula. Por isso, surgimos. Por isso, a Faculdade Universo da Amazônia (FaUnA) é um divisor de águas no ensino superior.',
+  ],
+  saberMais: {
+    concept:
+      'O pioneirismo também é nossa marca registrada. Nesse universo de inovação, criamos o “Saber Mais”, uma metodologia exclusiva que nos consolida mais e mais como um agente transformador de sonhos em realidade por meio da educação.',
+    methodology:
+      'O Saber Mais é a metodologia institucional da FAUNA: um modo próprio de organizar o ensino para que o estudante não se limite à diplomação formal e desenvolva identidade profissional — com nome, sobrenome, ética e postura.',
+    experience:
+      'Na mensagem institucional da Diretoria, a formação FAUNA é descrita como vivência da prática desde o primeiro dia de aula, com acolhimento personalizado e ambiente pensado como extensão da casa do estudante.',
+    differentials:
+      'A essência declarada da instituição não é quantidade, volume ou tamanho, e sim formação individualizada, à maneira de uma Faculdade Boutique, para fazer diferença no mercado de trabalho.',
+    application:
+      'A metodologia orienta graduação e pós-graduação da IES. A forma como cada turma de Barcarena a aplicará será detalhada quando a oferta local estiver publicada em documento oficial.',
+  },
+  cpaPresentation:
+    'A Comissão Própria de Avaliação – CPA é formada pela comunidade de professores, estudantes e técnico-administrativos da Faculdade Universo da Amazônia, e por membros da sociedade civil. Portanto, a CPA deve contar, na sua composição, com a participação de representantes de todos os segmentos da comunidade universitária e, também da sociedade civil organizada. A CPA é composta por um grupo de pessoas capazes de assumir a responsabilidade pelo desenvolvimento de todas as ações previstas no processo avaliativo. Fundamenta-se na necessidade de promover a melhoria da qualidade da educação superior, a orientação da expansão da sua oferta, o aumento da sua eficácia institucional, da sua efetividade acadêmica e social, especialmente, do aprofundamento dos compromissos e responsabilidades sociais.',
+  cpaPurpose:
+    'A Comissão Própria de Avaliação – CPA tem por finalidade coordenar a AVALIAÇÃO INTERNA ou AUTOAVALIAÇÃO, a qual tem como principais objetivos produzir conhecimentos, por em questão os sentidos do conjunto de atividades e finalidades cumpridas pela instituição, identificar as causas de suas deficiências, aumentar a consciência pedagógica e capacidade profissional do corpo docente e técnico-administrativo, fortalecer as relações de cooperação entre os diversos atores institucionais, tornar mais efetiva a vinculação da instituição com a comunidade, julgar acerca da relevância científica e social de suas atividades e produtos, além de prestar contas à sociedade.',
+  lgpdIntro:
+    'A sua privacidade é importante para nós. É política da F P do Nascimento EIRELI, mantenedora da Faculdade Universo da Amazônia (FaUnA), respeitar a sua privacidade em relação a qualquer informação sua que possamos coletar no site da FaUnA, e outros sites que possuímos e operamos.',
+  lgpdBody: [
+    'Solicitamos informações pessoais apenas quando realmente precisamos delas para lhe fornecer um serviço. Fazemo-lo por meios justos e legais, com o seu conhecimento e consentimento. Também informamos por que estamos coletando e como será usado.',
+    'Apenas retemos as informações coletadas pelo tempo necessário para fornecer o serviço solicitado. Quando armazenamos dados, protegemos dentro de meios comercialmente aceitáveis para evitar perdas e roubos, bem como acesso, divulgação, cópia, uso ou modificação não autorizados.',
+    'Não compartilhamos informações de identificação pessoal publicamente ou com terceiros, exceto quando exigido por lei.',
+    'O nosso site pode ter links para sites externos que não são operados por nós. Esteja ciente de que não temos controle sobre o conteúdo e práticas desses sites e não podemos aceitar responsabilidade por suas respectivas políticas de privacidade.',
+    'Você é livre para recusar a nossa solicitação de informações pessoais, entendendo que talvez não possamos fornecer alguns dos serviços desejados.',
+    'O uso continuado de nosso site será considerado como aceitação de nossas práticas em torno de privacidade e informações pessoais. Se você tiver alguma dúvida sobre como lidamos com dados do usuário e informações pessoais, utilize os canais oficiais publicados na página de Contato.',
+  ],
+  cookies: {
+    what: 'Como é prática comum em quase todos os sites profissionais, este site usa cookies, que são pequenos arquivos baixados no seu computador, para melhorar sua experiência. Esta página descreve quais informações eles coletam, como as usamos e por que às vezes precisamos armazenar esses cookies.',
+    how: 'Utilizamos cookies por vários motivos. Infelizmente, na maioria dos casos, não existem opções padrão do setor para desativar os cookies sem desativar completamente a funcionalidade e os recursos que eles adicionam a este site.',
+    disable:
+      'Você pode impedir a configuração de cookies ajustando as configurações do seu navegador. Esteja ciente de que a desativação de cookies afetará a funcionalidade deste e de muitos outros sites que você visita.',
+    effective: 'Esta política é efetiva a partir de Janeiro/2021.',
+  },
+};
 
 export interface BenefitProgram {
   id: string;
@@ -75,7 +134,7 @@ export const CONTENT_INVENTORY: ContentItem[] = [
     category: 'Institucional',
     source: 'Referência B (Conteúdo/Six)',
     status: 'validado',
-    notes: 'Preservado integralmente conforme diretriz oficial da mantenedora.',
+    notes: 'Textos integrais restaurados do site institucional anterior (missão, visão e seis valores).',
     summary: 'Missão: Formação indissociável de ensino, pesquisa e extensão voltada ao desenvolvimento regional, sustentabilidade e inovação.'
   },
   {
@@ -84,8 +143,8 @@ export const CONTENT_INVENTORY: ContentItem[] = [
     category: 'Pedagógico',
     source: 'Referência B (Conteúdo/Six)',
     status: 'validado',
-    notes: 'Metodologia de ensino ativa e inovadora da FAUNA aplicada a todas as unidades.',
-    summary: 'Metodologia exclusiva da FAUNA com foco em prática desde os primeiros períodos e desenvolvimento de competências para o mundo real.'
+    notes: 'Texto-base recuperado do site anterior. Aplicação em Barcarena permanece pendente de documento oficial.',
+    summary: 'Metodologia exclusiva da FAUNA descrita como agente transformador por meio da educação.'
   },
   {
     id: 'inv-cpa',
@@ -93,7 +152,7 @@ export const CONTENT_INVENTORY: ContentItem[] = [
     category: 'Regulatório / MEC',
     source: 'Referência B (Conteúdo/Six)',
     status: 'validado',
-    notes: 'Estrutura obrigatória de autoavaliação com relatórios anuais 2018–2025.',
+    notes: 'Textos de apresentação e finalidade recuperados. Relatórios sem arquivo não são listados para download.',
     summary: 'Comissão tripartite (docentes, discentes e técnico-administrativos com sociedade civil) para garantir a melhoria contínua da qualidade acadêmica.'
   },
   {
@@ -183,8 +242,8 @@ export const CONTENT_INVENTORY: ContentItem[] = [
     category: 'Infraestrutura Digital',
     source: 'Referência B (Conteúdo/Six)',
     status: 'validado',
-    notes: 'Sistemas corporativos já ativos na infraestrutura da mantenedora disponíveis aos estudantes de Barcarena.',
-    summary: 'Acesso a milhares de títulos digitais, periódicos CAPES, sistema acadêmico e aulas complementares.'
+    notes: 'Nomes de portais e biblioteca recuperados do menu da IES; URLs e disponibilidade em Barcarena não confirmadas.',
+    summary: 'Portais e biblioteca digital da instituição, com acesso ainda não publicado para Barcarena.'
   }
 ];
 
@@ -403,33 +462,39 @@ export const BENEFIT_PROGRAMS: BenefitProgram[] = [
 export const NEWS_DATA: NewsItem[] = [
   {
     id: 'news-1',
-    title: 'FAUNA inicia preparação institucional de seu novo campus em Barcarena',
-    date: '15 de Outubro de 2026',
-    category: 'Institucional',
-    excerpt: 'Com projeto focado na vocação amazônica e no desenvolvimento humano, a Faculdade Universo da Amazônia consolida presença no município.',
-    readTime: '3 min de leitura',
+    title: '2018: o início da Faculdade Universo da Amazônia',
+    date: '2018',
+    category: 'Memória institucional',
+    excerpt: 'Publicação da portaria de autorização e início dos cursos de Gestão Hospitalar e Recursos Humanos. Realização do primeiro vestibular em 2018.1.',
+    readTime: 'Memória',
     image: '/assets/fauna-photo-2-DMa52OaB.jpg',
-    status: 'institucional'
+    status: 'institucional',
+    fullText:
+      'Registro da trajetória da instituição, recuperado do site institucional anterior. Não descreve o campus de Barcarena.\n\nPublicação da portaria de autorização e início dos cursos de Gestão Hospitalar e Recursos Humanos. Realização do primeiro vestibular em 2018.1.',
   },
   {
     id: 'news-2',
-    title: 'Método Saber Mais: a integração entre teoria, prática e território',
-    date: '02 de Outubro de 2026',
-    category: 'Acadêmico',
-    excerpt: 'Conheça como a metodologia pedagógica exclusiva da FAUNA estimula liderança, pensamento crítico e soluções para desafios amazônicos.',
-    readTime: '4 min de leitura',
+    title: '2019: autorização de Enfermagem e Odontologia',
+    date: '2019',
+    category: 'Memória institucional',
+    excerpt: 'Ampliação da estrutura física e inauguração de novos espaços. Autorização dos cursos de Enfermagem e Odontologia.',
+    readTime: 'Memória',
     image: '/assets/fauna-photo-3-DKHEpz8K.jpg',
-    status: 'institucional'
+    status: 'institucional',
+    fullText:
+      'Registro da trajetória da instituição, recuperado do site institucional anterior. Refere-se à expansão da IES, não à unidade de Barcarena.\n\nAmpliação da estrutura física e inauguração de novos espaços. Autorização dos cursos de Enfermagem e Odontologia.',
   },
   {
     id: 'news-3',
-    title: 'Comissão Própria de Avaliação (CPA) abre ciclo preparatório para o ano letivo',
-    date: '28 de Setembro de 2026',
-    category: 'Regulatório',
-    excerpt: 'Comunidade docente e discente participa dos instrumentos de autoavaliação contínua para manter os mais elevados índices de qualidade.',
-    readTime: '2 min de leitura',
+    title: '2022: inauguração da Unidade FaUnA Prime',
+    date: '2022',
+    category: 'Memória institucional',
+    excerpt: 'Inauguração da Unidade FaUnA Prime e ampliação da estrutura da instituição em Belém.',
+    readTime: 'Memória',
     image: '/assets/fauna-photo-4-Bot9x6Jv.jpg',
-    status: 'institucional'
+    status: 'institucional',
+    fullText:
+      'Registro histórico da instituição, recuperado do site institucional anterior. A Unidade Prime pertence à operação de Belém e não deve ser lida como campus de Barcarena.\n\nInauguração da Unidade FaUnA Prime e ampliação da estrutura.',
   }
 ];
 
@@ -439,32 +504,32 @@ export const NEWS_DATA: NewsItem[] = [
 export const TIMELINE_HISTORY = [
   {
     year: '2018',
-    title: 'O Início & Primeira Portaria',
-    description: 'Publicação da portaria de autorização pelo MEC e início dos cursos de Gestão Hospitalar e Recursos Humanos, realizando o primeiro vestibular histórico.'
+    title: 'O início',
+    description: 'Trajetória da instituição: publicação da portaria de autorização e início dos cursos de Gestão Hospitalar e Recursos Humanos. Realização do primeiro vestibular em 2018.1.'
   },
   {
     year: '2019',
-    title: 'Expansão e Autorizações',
-    description: 'Ampliação da estrutura física, novos espaços e autorização das graduações em Enfermagem e Odontologia.'
+    title: 'Crescimento',
+    description: 'Trajetória da instituição: ampliação da estrutura física e inauguração de novos espaços. Autorização dos cursos de Enfermagem e Odontologia.'
   },
   {
     year: '2020',
-    title: 'Clínicas e Laboratórios de Ponta',
-    description: 'Implantação do programa de instrumental próprio, aquisição de novas instalações laboratoriais e adaptação para simulação realística.'
+    title: 'Ampliação',
+    description: 'Trajetória da instituição: aquisição de novo prédio para clínicas e laboratórios de odontologia e implantação do programa de material e instrumental.'
   },
   {
     year: '2021',
-    title: 'Consolidação e Reconhecimento',
-    description: 'Esgotamento das vagas em Enfermagem e Odontologia, modernização de ambientes e início do programa FAUNA Experience.'
+    title: 'Meta atingida',
+    description: 'Trajetória da instituição: esgotamento das vagas de Odontologia e Enfermagem; laboratório de simulações e modernização dos ambientes.'
   },
   {
     year: '2022',
-    title: 'Unidade Prime & Inovação',
-    description: 'Lançamento da Unidade Prime com modelo boutique de atendimento exclusivo e turmas com acompanhamento individualizado.'
+    title: 'Visão de futuro',
+    description: 'Trajetória da instituição em Belém: inauguração da Unidade FaUnA Prime e ampliação da estrutura. Este marco não descreve o campus de Barcarena.'
   },
   {
     year: '2026',
-    title: 'FAUNA Barcarena — Da Amazônia para o Mundo',
-    description: 'Novo marco estratégico: implantação do polo de excelência em Barcarena, conectando conhecimento acadêmico, bioeconomia e o futuro profissional do Pará.'
+    title: 'Barcarena — recorte deste site',
+    description: 'Este site institucional apresenta a FAUNA com foco em Barcarena. A implantação local e os atos regulatórios correspondentes serão publicados quando os documentos oficiais estiverem disponíveis. Não equivale a campus já autorizado neste canal.'
   }
 ];

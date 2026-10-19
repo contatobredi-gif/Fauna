@@ -5,6 +5,7 @@ import { NEWS_DATA } from '../../data/content';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { gsap } from '../../utils/motionConfig';
+import { SectionEyebrow } from '../ui/SectionEyebrow';
 
 export const Scene09NewsEvents: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -38,21 +39,19 @@ export const Scene09NewsEvents: React.FC = () => {
   return (
     <section
       ref={containerRef}
-      className="py-28 bg-[#FAF8F5] text-[#1D2B24] border-t border-[#E5DFD3]"
+      className="py-28 bg-[#FAF8F5] text-[#1D2B24]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-[#8A6D3B] uppercase mb-3">
+            <div className="flex items-center gap-2 mb-3">
               <Bookmark className="w-4 h-4 text-[#C9A44C]" />
-              <span>09 / VIDA ACADÊMICA & IMPRENSA</span>
-              <span>—</span>
-              <span>ACONTECE NA FAUNA</span>
+              <SectionEyebrow className="mb-0">Memória institucional</SectionEyebrow>
             </div>
             <h2 className="text-3xl sm:text-5xl font-serif font-normal text-[#123524] leading-tight">
-              Acontece na FAUNA.
+              Trajetória da Faculdade Universo da Amazônia.
             </h2>
           </div>
 
@@ -60,7 +59,7 @@ export const Scene09NewsEvents: React.FC = () => {
             to="/noticias"
             className="inline-flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-[#123524] hover:text-[#C9A44C] font-semibold transition-colors"
           >
-            <span>Ver todas as publicações e editais →</span>
+            <span>Ver memória institucional →</span>
           </Link>
         </div>
 
@@ -72,13 +71,15 @@ export const Scene09NewsEvents: React.FC = () => {
           {NEWS_DATA.map((article) => (
             <article
               key={article.id}
-              className="bg-white rounded-3xl border border-[#E5DFD3] overflow-hidden hover:border-[#C9A44C] hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
+              className="bg-white rounded-3xl border border-[#E5DFD3] overflow-hidden hover:border-[#C9A44C] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
             >
               <div>
                 <div className="relative h-56 overflow-hidden bg-[#0A1F15]">
                   <img
                     src={article.image}
                     alt={article.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = '/assets/fauna-photo-3-DKHEpz8K.jpg';
@@ -116,7 +117,7 @@ export const Scene09NewsEvents: React.FC = () => {
                   to="/noticias"
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#123524] group-hover:text-[#C9A44C] transition-colors"
                 >
-                  <span>Ler matéria completa</span>
+                  <span>Ler registro</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>

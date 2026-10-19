@@ -114,30 +114,30 @@ export const VidaAcademicaPage: React.FC = () => {
           <div id="biblioteca" className="space-y-10 animate-fade-in scroll-mt-28">
             <div className="bg-white rounded-3xl border border-[#E5DFD3] p-8 sm:p-12 space-y-6">
               <span className="text-xs font-mono uppercase tracking-widest text-[#8A6D3B] block">
-                ACERVO FÍSICO E DIGITAL
+                BIBLIOTECA INSTITUCIONAL
               </span>
               <h2 className="text-3xl font-serif font-bold text-[#123524]">
                 Biblioteca Universitária & Periódicos Virtuais
               </h2>
               <p className="text-sm text-[#47574E] leading-relaxed max-w-3xl">
-                O Sistema Integrado de Bibliotecas da FAUNA oferece acesso presencial ao acervo físico e mais de 10.000 títulos na plataforma <strong>Minha Biblioteca</strong>, além do Portal de Periódicos CAPES e bases científicas de alto impacto.
+                No site institucional anterior, a FAUNA mantinha páginas de biblioteca online, órgãos, portais, periódicos e publicações virtuais. Três dessas seções estavam “em atualização”; a de periódicos listava títulos por área do conhecimento. O acesso digital, o login da Minha Biblioteca e o acervo presencial em Barcarena serão informados quando os endereços e as instalações oficiais forem publicados.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
                 <div className="p-5 bg-[#FAF5EE] rounded-2xl border border-[#E5DFD3] space-y-2">
                   <Library className="w-6 h-6 text-[#123524]" />
                   <h4 className="font-serif font-bold text-[#123524]">Biblioteca presencial</h4>
-                  <p className="text-xs text-[#57685F]">Espaço de estudo, consulta local e apoio à pesquisa no campus de Barcarena.</p>
+                  <p className="text-xs text-[#57685F]">Consulta local e apoio à pesquisa serão descritos quando o espaço físico de Barcarena estiver confirmado. Não há endereço de biblioteca do polo publicado neste site.</p>
                 </div>
                 <div id="biblioteca-digital" className="p-5 bg-[#FAF5EE] rounded-2xl border border-[#E5DFD3] space-y-2 scroll-mt-28">
                   <BookOpen className="w-6 h-6 text-[#123524]" />
                   <h4 className="font-serif font-bold text-[#123524]">Biblioteca Digital</h4>
-                  <p className="text-xs text-[#57685F]">Minha Biblioteca, periódicos CAPES e bases científicas. O login institucional será publicado com os portais oficiais.</p>
+                  <p className="text-xs text-[#57685F]">Minha Biblioteca aparece no menu institucional da IES, ainda sem URL pública. O login e as bases contratadas para Barcarena serão publicados com os portais oficiais.</p>
                 </div>
                 <div className="p-5 bg-[#FAF5EE] rounded-2xl border border-[#E5DFD3] space-y-2">
                   <ShieldCheck className="w-6 h-6 text-[#123524]" />
                   <h4 className="font-serif font-bold text-[#123524]">Guias de Normalização</h4>
-                  <p className="text-xs text-[#57685F]">Manuais de normas ABNT e modelos de Trabalhos de Conclusão de Curso (TCC).</p>
+                  <p className="text-xs text-[#57685F]">O site anterior citava o Guia de Normalização 2022 entre as normas institucionais, sem arquivo disponível para download. O documento será vinculado quando houver PDF oficial.</p>
                 </div>
               </div>
             </div>
@@ -152,7 +152,7 @@ export const VidaAcademicaPage: React.FC = () => {
               </div>
               <h3 className="font-serif text-2xl font-bold text-[#123524]">Talentos S/A</h3>
               <p className="text-xs text-[#57685F] leading-relaxed">
-                O elo contínuo entre os alunos da FAUNA e as oportunidades do polo industrial, portuário e hospitalar de Barcarena. Gerenciamento de convênios de estágio, programas de trainees e mentoria para processos seletivos.
+                No acervo institucional, o programa Profissional S/A — desenvolvido pelo curso de Recursos Humanos da FAUNA — é descrito como ferramenta de capacitação e inserção profissional, com cursos e treinamentos. A nomenclatura Talentos S/A permanece neste site. Convênios específicos de Barcarena ainda não foram publicados.
               </p>
               <p className="text-xs font-semibold text-[#8A6D3B]">Convênios em formalização para o polo Barcarena.</p>
             </div>
@@ -167,7 +167,7 @@ export const VidaAcademicaPage: React.FC = () => {
               </div>
               <h3 className="font-serif text-2xl font-bold text-[#123524]">FAUNA LAB</h3>
               <p className="text-xs text-[#57685F] leading-relaxed">
-                Laboratório interdisciplinar de inovação e projetos práticos. Conecta estudantes de saúde, gestão e tecnologia a soluções aplicadas de bioeconomia, gestão pública e sustentabilidade amazônica.
+                No site anterior, o FAUNA LAB era apresentado como área de precisão, confiança e inovação, com a nota de que resultados e serviços laboratoriais estariam disponíveis em breve. Não há, neste canal, confirmação de laboratório em operação em Barcarena.
               </p>
               <p className="text-xs font-semibold text-[#8A6D3B]">Iniciativa de pesquisa e desenvolvimento em estruturação.</p>
             </div>
@@ -184,7 +184,7 @@ export const VidaAcademicaPage: React.FC = () => {
                 Documentos e validação de diplomas
               </h2>
               <p className="text-sm text-[#47574E] leading-relaxed max-w-3xl">
-                A FAUNA emitirá diplomas e documentos acadêmicos conforme as Portarias MEC nº 330/2018 e nº 554/2019, com certificação digital quando o serviço estiver operacional.
+                A emissão e a validação de documentos acadêmicos seguirão as normas aplicáveis à instituição quando o serviço correspondente estiver operacional. Neste site, os validadores digitais permanecem sem endereço público, como no menu anterior da IES.
               </p>
 
               <div id="validador" className="max-w-lg p-6 bg-[#FAF5EE] rounded-2xl border border-[#E5DFD3] space-y-3 scroll-mt-28">
