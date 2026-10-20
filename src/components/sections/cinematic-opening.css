@@ -1,0 +1,154 @@
+/* Escopo da nova abertura. As páginas internas e as outras cenas não são redefinidas. */
+.cinematic-opening {
+  --opening-forest: #123524;
+  --opening-paper: #faf8f5;
+  --opening-gold: #9e7b2b;
+  position: relative;
+  flex: none;
+  background: var(--opening-paper);
+  color: var(--opening-forest);
+}
+.opening-stage { position: relative; }
+.opening-identity {
+  position: relative;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8rem 6vw 6rem;
+  overflow: clip;
+  background: var(--opening-forest);
+  color: var(--opening-paper);
+}
+.opening-wordmark { width: fit-content; max-width: 100%; }
+.opening-brand {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(8rem, 28vw, 31rem);
+  line-height: 0.78;
+  font-weight: 400;
+  letter-spacing: -0.065em;
+  transform-origin: 50% 56%;
+}
+.opening-subtitle {
+  margin: 2.75rem 0 0 0.5rem;
+  font-size: clamp(0.65rem, 0.85vw, 0.85rem);
+  font-weight: 400;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: #e5c879;
+}
+.opening-footline {
+  position: absolute;
+  bottom: clamp(2rem, 5vh, 4rem);
+  left: 6.5vw;
+  right: 6vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.opening-territory {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.19em;
+  color: #c1d4ca;
+}
+.opening-scroll {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-block: 0.75rem;
+  font-size: 0.7rem;
+  color: #faf8f5;
+}
+.opening-scroll:hover { color: #e5c879; }
+.opening-scroll:focus-visible, .opening-actions a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 6px;
+}
+.opening-aperture { display: contents; }
+.opening-documentary { display: none; position: absolute; inset: 0; pointer-events: none; }
+.opening-documentary, .opening-documentary img, .opening-documentary video {
+  height: 100%;
+  width: 100%;
+}
+.opening-documentary img, .opening-documentary video { object-fit: cover; }
+.opening-manifesto {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 1fr minmax(12rem, 0.42fr);
+  align-content: center;
+  column-gap: 5vw;
+  padding: 8rem 9vw 5rem;
+  background: var(--opening-paper);
+}
+.opening-manifesto-intro {
+  grid-column: 1 / -1;
+  margin: 0 0 2rem 0.4rem;
+  color: #57685f;
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+}
+.opening-manifesto-title {
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(4.5rem, 8.5vw, 10rem);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+.opening-manifesto-title:focus { outline: none; }
+.opening-line-mask { display: block; overflow: clip; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.opening-manifesto-line { display: block; }
+.opening-emphasis { font-style: italic; color: var(--opening-gold); padding-right: 0.08em; }
+.opening-manifesto-details { align-self: end; padding-bottom: 0.75rem; }
+.opening-manifesto-details > p { font-size: 0.84rem; line-height: 1.9; color: #57685f; }
+.opening-actions { display: flex; flex-direction: column; gap: 1.25rem; margin-top: 2rem; }
+.opening-actions a { display: inline-flex; width: fit-content; align-items: center; gap: 1rem; padding-block: 0.5rem; border-bottom: 1px solid #12352466; font-size: 0.78rem; }
+.opening-actions a:hover { color: #9e7b2b; }
+.opening-enrollment { display: block; width: fit-content; font-size: 0.68rem; color: #57685f; }
+.cinematic-opening[data-motion="desktop"] { height: 260svh; }
+.cinematic-opening[data-motion="desktop"] .opening-stage { position: sticky; top: 0; height: 100svh; overflow: clip; }
+.cinematic-opening[data-motion="desktop"] .opening-identity { position: absolute; inset: 0; }
+.cinematic-opening[data-motion="desktop"] .opening-aperture { display: block; position: absolute; inset: 0; background: var(--opening-paper); }
+.cinematic-opening[data-motion="desktop"] .opening-documentary { display: block; }
+.cinematic-opening[data-motion="desktop"] .opening-manifesto { position: absolute; inset: 0; background: transparent; }
+/* A continuação herda o mesmo papel, sem a sobreposição negativa do antigo hero. */
+.fauna-cinematic-continuation > #nossa-essencia { margin-top: 0; padding-top: 7rem; }
+body:has(.fauna-cinematic-home) header.text-white { background: #123524; }
+
+@media (min-width: 1700px) {
+  .opening-wordmark { margin-inline: auto; }
+}
+@media (max-width: 899px) {
+  .opening-identity { min-height: 92svh; padding: 8rem 6vw 7rem; }
+  .opening-brand { font-size: 28vw; }
+  .opening-subtitle { margin-top: 1.75rem; letter-spacing: 0.27em; font-size: 0.62rem; }
+  .opening-footline { flex-direction: column; align-items: flex-start; gap: 1rem; bottom: 2rem; }
+  .opening-territory { font-size: 0.6rem; }
+  .opening-scroll { gap: 1rem; font-size: 0.65rem; }
+  .opening-manifesto { min-height: 92svh; grid-template-columns: 1fr; padding: 6.5rem 8vw 5rem; }
+  .opening-manifesto-intro { margin-bottom: 2rem; margin-left: 0.2rem; }
+  .opening-manifesto-title { font-size: clamp(4rem, 14vw, 7.75rem); line-height: 0.98; }
+  .opening-manifesto-details { margin-top: 3rem; display: flex; flex-wrap: wrap; gap: 2rem; justify-content: space-between; align-items: start; }
+  .opening-manifesto-details > p { font-size: 0.75rem; }
+  .opening-actions { margin-top: 0; gap: 1rem; }
+  .fauna-cinematic-continuation > #nossa-essencia { padding-top: 4rem; }
+}
+@media (max-height: 650px) and (min-width: 900px) {
+  .opening-manifesto { padding-top: 6rem; padding-bottom: 2.5rem; }
+  .opening-manifesto-title { font-size: min(7.5vw, 20vh); }
+  .opening-manifesto-intro { margin-bottom: 1rem; }
+  .opening-subtitle { margin-top: 1.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-opening { height: auto !important; }
+  .opening-stage { position: relative !important; height: auto !important; overflow: visible !important; }
+  .opening-identity, .opening-manifesto { position: relative !important; }
+  .opening-aperture { display: contents !important; }
+  .opening-brand, .opening-manifesto-line { transform: none !important; opacity: 1 !important; }
+}
