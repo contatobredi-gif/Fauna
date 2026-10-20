@@ -68,7 +68,7 @@ export const MAIN_NAV_LINKS: NavLink[] = [
     label: 'Cursos',
     href: '/cursos',
     sublinks: [
-      { label: 'Graduação', href: '/cursos?tipo=graduacao', description: 'Formação superior presencial' },
+      { label: 'Graduação', href: '/cursos?tipo=graduacao', description: 'Direito, Enfermagem e Psicologia em Barcarena' },
       { label: 'Pós-graduação', href: '/cursos?tipo=pos', description: 'Especializações profissionais' },
       { label: 'Extensão Universitária', href: '/cursos?tipo=extensao', description: 'Programas de curta duração, quando ofertados' },
     ],

@@ -19,6 +19,7 @@ const FacultyPage = lazy(() =>
 const CursosPage = lazy(() =>
   import('./pages/CursosPage').then((module) => ({ default: module.CursosPage }))
 );
+const CursoPage = lazy(() => import('./pages/CursoPage').then((module) => ({ default: module.CursoPage })));
 const ComoIngressarPage = lazy(() =>
   import('./pages/ComoIngressarPage').then((module) => ({ default: module.ComoIngressarPage }))
 );
@@ -78,6 +79,7 @@ export default function App() {
               <Route path="/institucional" element={<InstitucionalPage />} />
               <Route path="/institucional/diretoria-docentes" element={<FacultyPage />} />
               <Route path="/cursos" element={<CursosPage />} />
+              <Route path="/cursos/:slug" element={<CursoPage />} />
               <Route path="/como-ingressar" element={<ComoIngressarPage />} />
               <Route path="/beneficios" element={<BeneficiosPage />} />
               <Route path="/vida-academica" element={<VidaAcademicaPage />} />

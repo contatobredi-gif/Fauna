@@ -1,273 +1,137 @@
-import React, { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Search, Clock, MapPin, AlertCircle, BookOpen, GraduationCap } from 'lucide-react';
-import { COURSES_DATA, Course } from '../data/content';
-import { ValidationNotice } from '../components/ui/ValidationNotice';
+import { useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { ArrowRight, Search } from 'lucide-react';
+import { BARCARENA_COURSES, getCourseCoordinator } from '../data/barcarenaCourses';
+import { getEnrollmentUrl } from '../config/externalLinks';
+import { CourseEditorialVisual } from '../components/ui/CourseEditorialVisual';
 import { EnrollmentCta } from '../components/ui/EnrollmentCta';
+import { SectionEyebrow } from '../components/ui/SectionEyebrow';
 import { useAlignedHashScroll } from '../hooks/useHashTab';
-import type { EnrollmentKind } from '../config/externalLinks';
+import { useCourseSeo } from '../hooks/useCourseSeo';
 
-const TYPE_OPTIONS = ['Todos', 'Graduação', 'Pós-graduação', 'Extensão'] as const;
+const categories = [
+  { value: 'graduacao', label: 'Graduação' },
+  { value: 'pos', label: 'Pós-graduação' },
+  { value: 'extensao', label: 'Extensão' },
+] as const;
 
-function typeFromQuery(tipo: string | null): (typeof TYPE_OPTIONS)[number] {
-  if (tipo === 'pos') return 'Pós-graduação';
-  if (tipo === 'extensao') return 'Extensão';
-  if (tipo === 'graduacao') return 'Graduação';
-  return 'Todos';
+function normalize(text: string) {
+  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
 }
 
-function queryFromType(type: string): string | null {
-  if (type === 'Pós-graduação') return 'pos';
-  if (type === 'Extensão') return 'extensao';
-  if (type === 'Graduação') return 'graduacao';
-  return null;
-}
-
-function enrollmentKindForCourse(course: Course): EnrollmentKind {
-  if (course.type === 'Pós-graduação') return 'pos';
-  if (course.type === 'Extensão') return 'extensao';
-  return 'graduacao';
-}
-
-export const CursosPage: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const typeFilter = typeFromQuery(searchParams.get('tipo'));
-  const [areaFilter, setAreaFilter] = useState<string>('Todas');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-
+export function CursosPage() {
+  const [params, setParams] = useSearchParams();
+  const selected = categories.find((category) => category.value === params.get('tipo')) ?? categories[0];
+  const [search, setSearch] = useState('');
+  const [area, setArea] = useState('Todas');
+  const areas = ['Todas', ...new Set(BARCARENA_COURSES.map((course) => course.area))];
+  const courses = BARCARENA_COURSES.filter((course) =>
+    (area === 'Todas' || area === course.area) &&
+    normalize(`${course.name} ${course.area} ${course.editorial.summary}`).includes(normalize(search).trim()),
+  );
   useAlignedHashScroll();
+  useCourseSeo('Cursos de graduação | FAUNA Barcarena', 'Conheça Direito, Enfermagem e Psicologia: apresentação dos cursos de graduação e coordenações da FAUNA Barcarena.', '/cursos');
 
-  const setTypeFilter = (type: string) => {
-    const next = new URLSearchParams(searchParams);
-    const query = queryFromType(type);
-    if (query) next.set('tipo', query);
-    else next.delete('tipo');
-    setSearchParams(next);
-  };
-
-  const filteredCourses = COURSES_DATA.filter((c) => {
-    const matchesType = typeFilter === 'Todos' || c.type === typeFilter;
-    const matchesArea = areaFilter === 'Todas' || c.area === areaFilter;
-    const matchesSearch =
-      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesType && matchesArea && matchesSearch;
-  });
+  function changeCategory(value: string) {
+    const next = new URLSearchParams(params);
+    next.set('tipo', value);
+    setParams(next);
+  }
 
   return (
-    <div className="pt-24 pb-28 bg-[#FAF8F5] text-[#1D2B24]">
-      <section className="bg-[#123524] text-white py-16 lg:py-20 border-b border-[#1C4E36]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-4">
-            <div className="flex items-center gap-2 text-xs font-mono text-[#C9A44C] tracking-widest uppercase">
-              <GraduationCap className="w-4 h-4" />
-              <span>CATÁLOGO ACADÊMICO · POLO BARCARENA</span>
-            </div>
-            <h1 className="text-3xl sm:text-5xl font-serif font-normal text-white leading-tight">
-              Cursos & Formação Superior
-            </h1>
-            <p className="text-sm sm:text-base text-[#B2C5BC] font-light leading-relaxed">
-              Explore as opções de graduação e pós-graduação desenhadas para conectar conhecimento contemporâneo e oportunidades reais no Pará.
-            </p>
+    <div className="bg-[#FAF8F5] pb-24 pt-24 text-[#1D2B24]">
+      <section className="overflow-hidden bg-[#123524] text-white">
+        <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[1.5fr_1fr] lg:py-24">
+          <div className="min-w-0">
+            <SectionEyebrow tone="forest">Formação acadêmica · FAUNA Barcarena</SectionEyebrow>
+            <h1 className="max-w-3xl font-serif text-4xl leading-tight sm:text-6xl lg:text-7xl">Conhecimento para transformar o seu futuro.</h1>
+            <p className="mt-7 max-w-xl text-base leading-relaxed text-[#D4DED8]">Conheça os cursos de graduação apresentados para a FAUNA Barcarena e descubra diferentes caminhos para sua formação profissional.</p>
+          </div>
+          <div aria-hidden="true" className="relative flex min-h-52 flex-col justify-center border-l border-[#C9A44C]/40 pl-8 lg:pl-12">
+            <span className="text-xs uppercase tracking-[0.25em] text-[#E5C879]">Raízes amazônicas</span>
+            <p className="my-5 font-serif text-4xl italic leading-tight sm:text-5xl">Pessoas.<br />Conhecimento.<br />Território.</p>
+            <span className="text-xs tracking-wider text-[#D4DED8]">Da Amazônia para o mundo.</span>
           </div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
-        <div className="mb-8">
-          <ValidationNotice
-            text="A grade oficial com portarias do MEC para as turmas presenciais de Barcarena está em processo de divulgação regulatória. As opções abaixo representam as matrizes curriculares da instituição preparadas para a expansão."
-          />
-        </div>
-
-        <div className="bg-white p-6 rounded-2xl border border-[#E5DFD3] shadow-xs space-y-4 mb-10">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-            <div className="md:col-span-5 relative">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#7A8A82]" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar por curso, área ou palavra-chave..."
-                className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm rounded-lg bg-[#FAF8F5] border border-[#D9D2C3] focus:border-[#123524] focus:ring-1 focus:ring-[#123524] outline-none"
-              />
-            </div>
-
-            <div className="md:col-span-4 flex items-center gap-1.5 p-1 bg-[#FAF8F5] rounded-xl border border-[#E5DFD3] overflow-x-auto">
-              {TYPE_OPTIONS.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setTypeFilter(t)}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
-                    typeFilter === t
-                      ? 'bg-[#123524] text-white'
-                      : 'text-[#57685F] hover:text-[#123524]'
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-
-            <div className="md:col-span-3">
-              <select
-                value={areaFilter}
-                onChange={(e) => setAreaFilter(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-lg bg-[#FAF8F5] border border-[#D9D2C3] focus:border-[#123524] focus:ring-1 focus:ring-[#123524] outline-none"
-              >
-                <option value="Todas">Todas as áreas</option>
-                <option value="Saúde">Área da Saúde</option>
-                <option value="Gestão & Negócios">Gestão & Negócios</option>
-                <option value="Direito & Sociedade">Direito & Sociedade</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCourses.map((c) => (
-            <div
-              key={c.id}
-              className="bg-white rounded-2xl border border-[#E5DFD3] p-6 flex flex-col justify-between hover:border-[#C9A44C] hover:shadow-lg transition-all duration-300 group"
-            >
-              <div>
-                <div className="flex items-center justify-between text-xs text-[#697A72] mb-3">
-                  <span className="font-mono uppercase tracking-wider text-[#8A6D3B] font-medium">
-                    {c.area}
-                  </span>
-                  <span className="text-slate-300">·</span>
-                  <span>{c.type}</span>
-                </div>
-
-                <h3 className="text-xl font-serif font-bold text-[#123524] group-hover:text-[#8A6D3B] transition-colors mb-2">
-                  {c.name}
-                </h3>
-
-                <p className="text-xs text-[#57685F] leading-relaxed mb-5 line-clamp-3">
-                  {c.description}
-                </p>
-
-                <div className="space-y-1.5 py-3 border-y border-[#F0ECE1] text-xs text-[#47574E] mb-5">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-3.5 h-3.5 text-[#C9A44C]" />
-                    <span>Duração: {c.duration}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-[#C9A44C]" />
-                    <span>Turnos: {c.shift} ({c.modality})</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <div className="mb-4">
-                  {c.status === 'em_estruturacao' ? (
-                    <div className="flex items-center gap-1.5 text-[11px] text-[#8A5A2B]">
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                      <span>{c.validationNote}</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-1.5 text-[11px] text-[#57685F]">
-                      <BookOpen className="w-3.5 h-3.5 shrink-0 text-[#C9A44C]" />
-                      <span>Turmas em planejamento</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex items-center justify-between gap-3 pt-2">
-                  <EnrollmentCta
-                    kind={enrollmentKindForCourse(c)}
-                    courseId={c.id}
-                    className="flex-1 py-2.5 px-3 bg-[#123524] hover:bg-[#0A1F15] text-[#FAF8F5] text-xs font-semibold rounded-lg transition-colors text-center"
-                  >
-                    Inscrever-se
-                  </EnrollmentCta>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedCourse(c)}
-                    className="px-3 py-2.5 text-xs text-[#123524] font-medium border border-[#E5DFD3] hover:border-[#123524] rounded-lg transition-colors"
-                  >
-                    Detalhes
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredCourses.length === 0 && (
-          <div className="py-16 text-center bg-white rounded-2xl border border-[#E5DFD3] space-y-3">
-            <p className="text-base font-serif text-[#123524]">
-              {typeFilter === 'Extensão'
-                ? 'A oferta de extensão universitária para Barcarena ainda está em estruturação.'
-                : 'Nenhum curso encontrado com esses filtros.'}
-            </p>
-            <p className="text-xs text-[#57685F] max-w-md mx-auto">
-              {typeFilter === 'Extensão'
-                ? 'Não publicamos turmas fictícias. Quando houver programação oficial, ela aparecerá nesta seção.'
-                : 'Ajuste a busca ou a área de conhecimento para ver as formações disponíveis no catálogo.'}
-            </p>
-            <button
-              type="button"
-              onClick={() => { setTypeFilter('Todos'); setAreaFilter('Todas'); setSearchQuery(''); }}
-              className="text-xs text-[#C9A44C] underline font-medium"
-            >
-              Limpar todos os filtros
+      <div className="mx-auto max-w-7xl px-5 pt-10 sm:px-8">
+        <nav aria-label="Categorias de formação" className="mb-10 flex flex-wrap gap-2 border-b border-[#E5DFD3] pb-5">
+          {categories.map((category) => (
+            <button key={category.value} type="button" aria-pressed={selected.value === category.value}
+              onClick={() => changeCategory(category.value)}
+              className={`rounded-xl px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123524] ${selected.value === category.value ? 'bg-[#123524] text-white' : 'bg-[#EBE4D5] text-[#123524] hover:bg-[#E5DFD3]'}`}>
+              {category.label}
             </button>
-          </div>
+          ))}
+        </nav>
+
+        {selected.value === 'graduacao' ? (
+          <section aria-labelledby="catalogue-title">
+            <div className="mb-8 grid gap-7 lg:grid-cols-2 lg:items-end">
+              <div>
+                <SectionEyebrow>Escolha seu caminho</SectionEyebrow>
+                <h2 id="catalogue-title" className="font-serif text-3xl text-[#123524] sm:text-4xl">Graduação em Barcarena</h2>
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#57685F]">Três cursos informados pela Direção. A apresentação não confirma autorização regulatória, inscrições abertas ou condições acadêmicas de oferta.</p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="course-search" className="mb-2 block text-xs text-[#57685F]">Buscar formação</label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-3.5 h-4 w-4 text-[#57685F]" aria-hidden="true" />
+                    <input id="course-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)}
+                      placeholder="Curso ou palavra-chave" className="w-full rounded-xl border border-[#D9D2C3] bg-white py-3 pl-10 pr-3 text-sm focus-visible:outline-[#123524]" />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="course-area" className="mb-2 block text-xs text-[#57685F]">Área de conhecimento</label>
+                  <select id="course-area" value={area} onChange={(event) => setArea(event.target.value)} className="w-full rounded-xl border border-[#D9D2C3] bg-white px-3 py-3 text-sm focus-visible:outline-[#123524]">
+                    {areas.map((item) => <option key={item} value={item}>{item === 'Todas' ? 'Todas as áreas' : item}</option>)}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <p role="status" className="mb-4 text-xs text-[#57685F]">{courses.length} {courses.length === 1 ? 'curso encontrado' : 'cursos encontrados'}</p>
+            <div className="grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {courses.map((course) => {
+                const coordinator = getCourseCoordinator(course);
+                return (
+                  <article key={course.id} className="flex min-w-0 flex-col overflow-hidden rounded-[1.5rem] border border-[#E5DFD3] bg-white">
+                    <CourseEditorialVisual course={course} compact />
+                    <div className="flex flex-1 flex-col p-6 sm:p-7">
+                      <p className="text-[10px] uppercase tracking-[0.15em] text-[#8A6D3B]">{course.area}</p>
+                      <h3 className="mt-3 font-serif text-3xl text-[#123524]">{course.name}</h3>
+                      <p className="mb-6 mt-4 text-sm leading-relaxed text-[#57685F]">{course.editorial.summary}</p>
+                      {coordinator && <p className="mb-6 mt-auto border-t border-[#E5DFD3] pt-4 text-xs leading-relaxed text-[#57685F]"><span className="mb-1 block text-[#8A6D3B]">Coordenação</span>{coordinator.name}</p>}
+                      <Link to={`/cursos/${course.slug}`} aria-label={`Conheça o curso de ${course.name}`} className="inline-flex items-center justify-between gap-4 rounded-xl bg-[#123524] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0A1F15]">
+                        Conheça o curso <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+                      </Link>
+                      {getEnrollmentUrl(course.enrollment) && <EnrollmentCta {...course.enrollment} className="mt-4 text-center text-sm text-[#123524] underline underline-offset-4">Acessar inscrição oficial</EnrollmentCta>}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+            {courses.length === 0 && <div className="rounded-2xl border border-[#E5DFD3] bg-white p-8">
+              <h3 className="font-serif text-2xl text-[#123524]">Nenhum curso encontrado com esses filtros.</h3>
+              <button type="button" onClick={() => { setSearch(''); setArea('Todas'); }} className="mt-4 text-sm text-[#123524] underline underline-offset-4">Limpar filtros</button>
+            </div>}
+          </section>
+        ) : (
+          <section className="grid gap-8 rounded-[2rem] border border-[#E5DFD3] bg-white p-7 sm:p-12 lg:grid-cols-[1fr_1.2fr]" aria-labelledby="preparation-title">
+            <div>
+              <SectionEyebrow>Formação continuada</SectionEyebrow>
+              <h2 id="preparation-title" className="font-serif text-3xl text-[#123524] sm:text-4xl">{selected.label}</h2>
+            </div>
+            <div>
+              <h3 className="font-serif text-2xl text-[#123524]">Uma nova etapa de conhecimento, em preparação.</h3>
+              <p className="mt-4 text-sm leading-relaxed text-[#57685F]">{selected.value === 'pos' ? 'A pós-graduação amplia o diálogo entre conhecimento e trajetória profissional.' : 'A extensão aproxima conhecimento e sociedade, abrindo espaço para trocas e novas experiências.'} A programação própria de Barcarena será apresentada após confirmação institucional.</p>
+              <p className="mt-4 text-sm leading-relaxed text-[#57685F]">Ainda não há grade, turmas ou inscrições confirmadas para publicação nesta categoria.</p>
+              <button type="button" onClick={() => changeCategory('graduacao')} className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[#123524] underline underline-offset-4">Conheça a graduação <ArrowRight className="h-4 w-4" aria-hidden="true" /></button>
+            </div>
+          </section>
         )}
       </div>
-
-      {selectedCourse && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
-          onClick={() => setSelectedCourse(null)}
-        >
-          <div
-            className="relative w-full max-w-lg bg-[#FAF8F5] rounded-2xl border border-[#E5DFD3] shadow-2xl p-6 overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between text-xs text-[#8A6D3B] font-mono uppercase mb-2">
-              <span>{selectedCourse.area}</span>
-              <span>{selectedCourse.type}</span>
-            </div>
-
-            <h3 className="text-2xl font-serif font-bold text-[#123524] mb-3">
-              {selectedCourse.name}
-            </h3>
-
-            <p className="text-xs sm:text-sm text-[#47574E] leading-relaxed mb-5">
-              {selectedCourse.description}
-            </p>
-
-            <div className="space-y-2 p-4 rounded-xl bg-white border border-[#E5DFD3] text-xs text-[#47574E] mb-6">
-              <div><strong className="text-[#123524]">Duração estimada:</strong> {selectedCourse.duration}</div>
-              <div><strong className="text-[#123524]">Turnos de oferta:</strong> {selectedCourse.shift}</div>
-              <div><strong className="text-[#123524]">Modalidade:</strong> {selectedCourse.modality}</div>
-              <div><strong className="text-[#123524]">Status Institucional:</strong> {selectedCourse.validationNote}</div>
-            </div>
-
-            <div className="flex items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setSelectedCourse(null)}
-                className="px-4 py-2 text-xs font-medium text-[#57685F] hover:text-[#123524]"
-              >
-                Fechar
-              </button>
-              <EnrollmentCta
-                kind={enrollmentKindForCourse(selectedCourse)}
-                courseId={selectedCourse.id}
-                className="px-5 py-2.5 bg-[#123524] hover:bg-[#0A1F15] text-[#FAF8F5] text-xs font-semibold rounded-lg transition-colors text-center"
-              >
-                Inscrever-se
-              </EnrollmentCta>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
-};
+}
