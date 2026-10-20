@@ -7,6 +7,7 @@ import React, { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
+import { EnvironmentNotice } from './components/ui/EnvironmentNotice';
 import { HomePage } from './pages/HomePage';
 import { ScrollTrigger } from './utils/motionConfig';
 
@@ -91,6 +92,7 @@ export default function App() {
           </Suspense>
         </main>
 
+        <EnvironmentNotice />
         <Footer />
       </div>
     </BrowserRouter>
