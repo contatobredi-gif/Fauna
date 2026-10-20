@@ -1,3 +1,5 @@
+> Histórico da versão tipográfica 9bb7491. A experiência atual está documentada em EXPERIENCIA_CINEMATOGRAFICA_INSTITUCIONAL.md.
+
 # Abertura cinematográfica FAUNA — avaliação local
 
 Implementação: 20/10/2026.

@@ -183,10 +183,10 @@ export const Header: React.FC = () => {
               className="shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A44C] rounded-xl"
               aria-label="FAUNA — Faculdade Universo da Amazônia, Página Inicial"
             >
-              {isGlass ? (
+              {isGlass && !isHome ? (
                 logoMark
               ) : (
-                <span className="inline-flex items-center rounded-xl bg-[#FAF8F5]/92 px-2 py-1 shadow-[0_10px_30px_rgba(6,21,14,0.28)]">
+                <span className="inline-flex items-center bg-[#FAF8F5] px-2 py-1">
                   {logoMark}
                 </span>
               )}

@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-const out = path.resolve('docs/cinematic-preview');
+const out = path.resolve('docs/institutional-preview');
 await mkdir(out, { recursive: true });
 const profile = await mkdtemp(path.join(tmpdir(), 'fauna-cinematic-chrome-'));
 const chrome = spawn(process.env.CHROME_PATH ?? 'C:/Program Files/Google/Chrome/Application/chrome.exe', [
@@ -13,6 +13,7 @@ const chrome = spawn(process.env.CHROME_PATH ?? 'C:/Program Files/Google/Chrome/
 let socket;
 const results = [];
 const errors = [];
+const delayedImages = [];
 let session;
 let id = 0;
 const pending = new Map();
@@ -31,6 +32,8 @@ try {
     if (message.id) {
       const entry = pending.get(message.id);
       if (entry) { pending.delete(message.id); message.error ? entry.reject(new Error(JSON.stringify(message.error))) : entry.resolve(message.result); }
+    } else if (message.method === 'Fetch.requestPaused') {
+      delayedImages.push(message.params.requestId);
     } else if (message.method === 'Runtime.exceptionThrown') {
       errors.push(message.params.exceptionDetails.text + ' ' + (message.params.exceptionDetails.exception?.description ?? ''));
     }
@@ -67,84 +70,129 @@ try {
     const { data } = await rpc('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
     await writeFile(path.join(out, name + '.png'), Buffer.from(data, 'base64'));
   };
-  const scroll = async (top) => {
+  const scroll = async(top) => {
     await evaluate(`window.scrollTo({top:${top},behavior:'instant'})`);
-    await delay(850);
+    await delay(700);
   };
-  const viewport = async (width, height = 950) => {
-    await rpc('Emulation.setDeviceMetricsOverride', {width,height,deviceScaleFactor:1,mobile:width<768});
+  const viewport = async(width,height=950) => {
+    await rpc('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:width<768});
     await delay(300);
   };
-  const triggerCount = () => evaluate(`import('/src/utils/motionConfig.ts').then(({ScrollTrigger})=>ScrollTrigger.getAll().filter(t=>t.vars.id==='fauna-cinematic-opening').length)`);
+  const triggerCount=()=>evaluate(`import('/src/utils/motionConfig.ts').then(({ScrollTrigger})=>ScrollTrigger.getAll().filter(t=>t.vars.id==='fauna-cinematic-opening').length)`);
   await viewport(1440);
   await navigate('/');
-  await delay(700);
-  check('Desktop usa sequência sticky', await evaluate(`document.querySelector('.cinematic-opening').dataset.motion==='desktop'`));
-  check('H1 único e identidade preservada', await evaluate(`document.querySelectorAll('main h1').length===1 && document.querySelector('h1').textContent.startsWith('FAUNA')`));
-  check('Abertura sem imagens ou vídeo presumidos', await evaluate(`document.querySelectorAll('.cinematic-opening img,.cinematic-opening video').length===0`));
-  await screenshot('opening-desktop');
-  const distance=await evaluate(`document.querySelector('.cinematic-opening').offsetHeight-innerHeight`);
-  await scroll(distance*0.36);
-  await screenshot('transition-desktop');
-  await scroll(distance);
-  const manifesto=await evaluate(`(() => { const el=document.querySelector('.opening-manifesto'); return {opacity:getComputedStyle(el).opacity,visibility:getComputedStyle(el).visibility,title:el.querySelector('h2').textContent,details:getComputedStyle(el.querySelector('.opening-manifesto-details')).opacity}; })()`);
-  check('Manifesto legível ao completar a transição', manifesto.visibility==='visible' && Number(manifesto.opacity)>0.95 && Number(manifesto.details)>0.9,manifesto);
-  await screenshot('manifesto-desktop');
-  await scroll(0);
-  const matrix=await evaluate(`getComputedStyle(document.querySelector('.opening-brand')).transform`);
-  check('Retorno da rolagem restaura a marca', matrix==='none'||Math.abs(Number(matrix.slice(7).split(',')[0])-1)<0.02,matrix);
-  await evaluate(`document.querySelector('.opening-scroll').click()`);
-  await delay(1700);
-  check('Link de descoberta chega ao manifesto', await evaluate(`getComputedStyle(document.querySelector('.opening-manifesto')).visibility==='visible' && document.querySelector('.opening-manifesto-title').getBoundingClientRect().top>60`));
-  check('Link de descoberta move o foco para o manifesto', await evaluate(`document.activeElement===document.querySelector('.opening-manifesto-title')`));
-  await scroll(distance+450);
-  check('Continuidade sem margem negativa ou sobreposição', await evaluate(`getComputedStyle(document.querySelector('#nossa-essencia')).marginTop==='0px'`));
-  check('Uma timeline da abertura ativa', await triggerCount()===1);
-  await evaluate(`document.querySelector('.opening-actions a[href="/cursos"]').click()`);
-  await waitFor(`location.pathname==='/cursos' && !!document.querySelector('#catalogue-title')`);
-  check('Página de cursos preservada', await evaluate(`document.querySelectorAll('main article').length===3`));
-  check('Timeline desmontada ao navegar', await triggerCount()===0);
-  await evaluate(`document.querySelector('header a[href="/"]').click()`);
-  await waitFor(`!!document.querySelector('.cinematic-opening')`);
   await delay(400);
+  check('Primeira tela visual, sem marca gigante',await evaluate(`document.querySelector('main h1').textContent==='Uma nova forma de viver o ensino superior.' && !document.querySelector('.opening-brand')`));
+  check('Três cenas locais identificadas como ilustração',await evaluate(`document.querySelectorAll('.visual-scene').length===3 && [...document.querySelectorAll('.visual-scene img')].every(i=>i.alt.includes('Ilustração conceitual'))`));
+  await waitFor(`[...document.querySelectorAll('.visual-scene img')].every(i=>i.complete && i.naturalWidth>0)`);
+  check('Três imagens carregadas e íntegras',true);
+  await screenshot('arrival-desktop');
+  const distance=await evaluate(`document.querySelector('.institutional-journey').offsetHeight-innerHeight`);
+  await scroll(distance*.48);
+  check('Imersão legível',await evaluate(`Number(getComputedStyle(document.querySelector('[data-scene="immersion"]')).opacity)>.95 && Number(getComputedStyle(document.querySelector('[data-scene="immersion"] .visual-copy')).opacity)>.9`));
+  check('Header com superfície opaca e contraste estável',await evaluate(`getComputedStyle(document.querySelector('header')).backgroundColor==='rgb(250, 248, 245)'`));
+  await evaluate(`[...document.querySelectorAll('header nav a')].find(a=>a.textContent.trim()==='Cursos').focus()`);
+  await waitFor(`document.querySelector('header nav').dataset.dropdown==='Cursos'`);
+  check('Menu desktop abre durante a imersão',true);
+  await rpc('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape',code:'Escape'});
+  await rpc('Input.dispatchKeyEvent',{type:'keyUp',key:'Escape',code:'Escape'});
+  await screenshot('immersion-desktop');
+  await scroll(distance);
+  check('Presença legível',await evaluate(`getComputedStyle(document.querySelector('[data-scene="presence"]')).visibility==='visible' && Number(getComputedStyle(document.querySelector('[data-scene="presence"]')).opacity)>.95`));
+  await screenshot('presence-desktop');
+  await scroll(0);
+  check('Retorno restaura chegada',await evaluate(`Number(getComputedStyle(document.querySelector('[data-scene="immersion"]')).opacity)<.02 && Number(getComputedStyle(document.querySelector('[data-scene="arrival"] .visual-copy')).opacity)>.95`));
+  await evaluate(`document.querySelector('.visual-discover').click()`);
+  await delay(1400);
+  check('Link de descoberta alcança o manifesto',await evaluate(`document.querySelector('#primeiro-manifesto').getBoundingClientRect().top>=60 && document.querySelector('#primeiro-manifesto').getBoundingClientRect().top<innerHeight`));
+  await screenshot('manifesto-desktop');
+  check('Timeline única',await triggerCount()===1);
+  await evaluate(`document.querySelector('header a[href="/cursos"]').click()`);
+  await waitFor(`location.pathname==='/cursos' && !!document.querySelector('#catalogue-title')`);
+  check('Navegação ao catálogo preservada',await evaluate(`document.querySelectorAll('main article').length===3`));
+  check('Timeline limpa após navegação',await triggerCount()===0);
+  await evaluate(`document.querySelector('header a[href="/"]').click()`);
+  await waitFor(`!!document.querySelector('.institutional-journey')`);
+  await delay(300);
   check('Timeline recriada sem duplicação',await triggerCount()===1);
-
-  for(const width of [375,430,768,1024,1440]){
+  for(const width of [1440,768,375,430]){
     await viewport(width);
     await scroll(0);
-    const fit=await evaluate(`(() => {const r=document.querySelector('.opening-brand').getBoundingClientRect();return{width:innerWidth,scroll:document.documentElement.scrollWidth,left:r.left,right:r.right,mode:document.querySelector('.cinematic-opening').dataset.motion};})()`);
-    check(`${width}px sem overflow na marca`,fit.scroll<=fit.width+1 && fit.left>=-1 && fit.right<=fit.width+1,fit);
-    if(width===375)await screenshot('opening-mobile');
+    const layout=await evaluate(`({width:innerWidth,scroll:document.documentElement.scrollWidth,mode:document.querySelector('.institutional-journey').dataset.motion,h1:document.querySelector('main h1').getBoundingClientRect().right})`);
+    check(`${width}px sem overflow`,layout.scroll<=layout.width+1 && layout.h1<=layout.width+1,layout);
     if(width<900){
-      check(`${width}px sem sticky no mobile`,await evaluate(`getComputedStyle(document.querySelector('.opening-stage')).position!=='sticky'`));
-      await evaluate(`document.querySelector('.opening-manifesto-title').scrollIntoView({behavior:'instant',block:'center'})`);
-      await delay(800);
-      check(`${width}px manifesto legível`,await evaluate(`[...document.querySelectorAll('.opening-manifesto-line')].every(el=>Number(getComputedStyle(el).opacity)>0.85)`));
-      if(width===375)await screenshot('manifesto-mobile');
+      check(`${width}px mobile sem sticky`,await evaluate(`getComputedStyle(document.querySelector('.visual-stage')).position!=='sticky'`));
+      await evaluate(`document.querySelector('[data-scene="presence"]').scrollIntoView({behavior:'instant',block:'start'})`);
+      await delay(500);
+      check(`${width}px presença em fluxo natural`,await evaluate(`getComputedStyle(document.querySelector('[data-scene="presence"]')).visibility==='visible'`));
     }
+    if(width===375){await scroll(0);await screenshot('arrival-mobile');await evaluate(`document.querySelector('#primeiro-manifesto').scrollIntoView({behavior:'instant',block:'center'})`);await screenshot('manifesto-mobile');}
   }
-  await viewport(375,812);
   await scroll(0);
   await evaluate(`document.querySelector('header button[aria-controls="menu-mobile"]').click()`);
   await waitFor(`!!document.querySelector('#menu-mobile')`);
-  check('Menu mobile continua acessível',await evaluate(`document.querySelector('#menu-mobile').getAttribute('role')==='dialog'`));
+  check('Menu acessível durante a experiência',await evaluate(`document.querySelector('#menu-mobile').getAttribute('role')==='dialog'`));
   await evaluate(`document.querySelector('#menu-mobile button[aria-label="Fechar menu"]').click()`);
   await viewport(1440);
   await rpc('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
   await scroll(0);
-  await delay(300);
-  check('Reduced motion: fluxo estático sem timeline',await triggerCount()===0);
-  check('Reduced motion: marca e manifesto disponíveis',await evaluate(`!document.querySelector('.cinematic-opening').dataset.motion && getComputedStyle(document.querySelector('.opening-manifesto')).visibility==='visible'`));
-  await evaluate(`document.querySelector('.opening-manifesto-title').scrollIntoView({behavior:'instant',block:'center'})`);
+  check('Reduced motion sem timeline longa',await triggerCount()===0);
+  check('Reduced motion conserva todas as cenas',await evaluate(`!document.querySelector('.institutional-journey').dataset.motion && [...document.querySelectorAll('.visual-scene')].every(e=>getComputedStyle(e).visibility==='visible')`));
   await screenshot('reduced-motion');
   await rpc('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'no-preference'}]});
-  await scroll(0);
-  await delay(400);
-  check('Retorno do movimento sem duplicação',await triggerCount()===1);
+  await delay(300);
+  check('Retorno à animação sem duplicação',await triggerCount()===1);
   for(const route of ['/cursos/direito','/cursos/enfermagem','/cursos/psicologia','/institucional/diretoria-docentes']){
     await navigate(route);
-    check(`Rota interna preservada ${route}`,await evaluate(`!document.querySelector('.cinematic-opening') && document.querySelectorAll('main h1').length===1`));
+    check(`Rota interna preservada ${route}`,await evaluate(`!document.querySelector('.institutional-journey') && document.querySelectorAll('main h1').length===1`));
   }
+
+  await viewport(1440);
+  await navigate('/');
+  await evaluate(`document.querySelector('.institutional-signature').scrollIntoView({behavior:'instant',block:'start'})`);
+  await waitFor(`document.querySelector('.institutional-signature img').complete && document.querySelector('.institutional-signature img').naturalWidth>0`);
+  check('Assinatura FAUNA após a experiência',await evaluate(`document.querySelector('#signature-title').textContent==='FAUNA'`));
+  await screenshot('signature-desktop');
+  check('Formação sem grade convencional de cards',await evaluate(`document.querySelectorAll('.institutional-course').length===3 && document.querySelector('#formation-title').textContent.includes('trajetória')`));
+  for(const slug of ['direito','enfermagem','psicologia']){
+    await evaluate(`document.querySelector('.course-${slug}').scrollIntoView({behavior:'instant',block:'center'})`);
+    await waitFor(`document.querySelector('.course-${slug} img').complete && document.querySelector('.course-${slug} img').naturalWidth>0`);
+    const course=await evaluate(`(() => {const article=document.querySelector('.course-${slug}');return{href:article.querySelector('a').getAttribute('href'),label:article.querySelector('h3').textContent,src:article.querySelector('img').getAttribute('src')};})()`);
+    check(`Formação ${slug} íntegra e com rota correta`,course.href==='/cursos/'+slug&&course.src.includes('-concept.jpg'),course);
+    if(slug==='direito')await screenshot('formation-desktop');
+  }
+  await evaluate(`document.querySelector('.institutional-invitation').scrollIntoView({behavior:'instant',block:'center'})`);
+  check('Encerramento identificado como proposta editorial',await evaluate(`document.querySelector('.institutional-invitation').innerText.includes('Proposta editorial sujeita à validação institucional.')`));
+  await screenshot('invitation-desktop');
+  for(const width of [375,430,768,1440]){
+    await viewport(width);
+    for(const selector of ['.institutional-signature','.institutional-formation-intro','.course-direito','.course-enfermagem','.course-psicologia','.institutional-invitation']){
+      await evaluate(`document.querySelector('${selector}').scrollIntoView({behavior:'instant',block:'center'})`);
+      const bounds=await evaluate(`(() => {const section=document.querySelector('${selector}');return{width:innerWidth,scroll:document.documentElement.scrollWidth,clipped:[...section.querySelectorAll('h2,h3,p,a')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&(r.left < -1||r.right>innerWidth+1);}).map(e=>e.textContent)};})()`);
+      check(`${width}px ${selector} sem cortes horizontais`,bounds.scroll<=bounds.width+1&&bounds.clipped.length===0,bounds);
+    }
+    if(width===375){
+      await evaluate(`document.querySelector('.institutional-signature-copy').scrollIntoView({behavior:'instant',block:'center'})`);await screenshot('signature-mobile');
+      await evaluate(`document.querySelector('.course-direito .institutional-course-copy').scrollIntoView({behavior:'instant',block:'center'})`);await screenshot('formation-mobile');
+    }
+  }
+
+  // Reter só as imagens simula latência sem impedir a montagem do aplicativo.
+  await rpc('Network.enable');
+  await rpc('Network.setCacheDisabled',{cacheDisabled:true});
+  await rpc('Fetch.enable',{patterns:[{urlPattern:'*/assets/cinematic/*',requestStage:'Request'}]});
+  await rpc('Page.navigate',{url:'http://127.0.0.1:5173/'});
+  await waitFor(`!!document.querySelector('main h1')`);
+  await delay(1000);
+  check('Imagens lentas: requisições retidas',delayedImages.length>0);
+  const initialHeight=await evaluate(`document.querySelector('.visual-stage').getBoundingClientRect().height`);
+  check('Imagens lentas: título legível e espaço reservado',await evaluate(`document.querySelector('main h1').getBoundingClientRect().height>50 && getComputedStyle(document.querySelector('.visual-copy')).visibility==='visible'`));
+  await screenshot('slow-image-loading');
+  for(const requestId of delayedImages.splice(0))await rpc('Fetch.continueRequest',{requestId});
+  await rpc('Fetch.disable');
+  await waitFor(`[...document.querySelectorAll('.visual-scene img')].every(i=>i.complete && i.naturalWidth>0)`);
+  const finalHeight=await evaluate(`document.querySelector('.visual-stage').getBoundingClientRect().height`);
+  check('Imagens lentas: carregam sem salto de layout',Math.abs(finalHeight-initialHeight)<1,{initialHeight,finalHeight});
   check('Sem exceções JavaScript',errors.length===0,errors);
   await writeFile(path.join(out,'results.json'),JSON.stringify({results,errors},null,2));
   console.log('ARTIFACTS',out);
