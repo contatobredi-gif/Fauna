@@ -23,6 +23,7 @@ export function CinematicOpening() {
           const photos = select('.visual-scene img');
           const copies = select('.visual-copy');
           gsap.set(scenes.slice(1), { autoAlpha: 0 });
+          gsap.set(copies.slice(1), { autoAlpha: 0, y: 10 });
           const timeline = gsap.timeline({
             defaults: { ease: 'none' },
             scrollTrigger: {
@@ -31,20 +32,21 @@ export function CinematicOpening() {
             },
           });
           timeline
-            .fromTo(photos[0], { scale: 1.01 }, { scale: 1.11, xPercent: -1, duration: 0.6 }, 0)
-            .to(copies[0], { autoAlpha: 0, y: -18, duration: 0.12 }, 0.15)
-            .to(scenes[1], { autoAlpha: 1, duration: 0.22 }, 0.2)
-            .fromTo(photos[1], { scale: 1.02 }, { scale: 1.1, xPercent: -1, duration: 0.44 }, 0.28)
-            .fromTo(copies[1], { y: 18 }, { y: 0, duration: 0.2 }, 0.3)
-            .to(copies[1], { autoAlpha: 0, y: -16, duration: 0.1 }, 0.58)
-            .to(scenes[2], { autoAlpha: 1, duration: 0.2 }, 0.63)
-            .fromTo(photos[2], { scale: 1.04 }, { scale: 1.09, duration: 0.34 }, 0.66)
-            .fromTo(copies[2], { y: 18 }, { y: 0, duration: 0.16 }, 0.76);
+            // Dissolve the photographs first; titles never compete in the same frame.
+            .fromTo(photos[0], { scale: 1.015, transformOrigin: '65% 48%' }, { scale: 1.065, duration: 0.6 }, 0)
+            .to(copies[0], { autoAlpha: 0, y: -8, duration: 0.1 }, 0.14)
+            .to(scenes[1], { autoAlpha: 1, duration: 0.24 }, 0.2)
+            .fromTo(photos[1], { scale: 1.015, transformOrigin: '65% 48%' }, { scale: 1.055, duration: 0.48 }, 0.24)
+            .to(copies[1], { autoAlpha: 1, y: 0, duration: 0.1 }, 0.38)
+            .to(copies[1], { autoAlpha: 0, y: -8, duration: 0.08 }, 0.58)
+            .to(scenes[2], { autoAlpha: 1, duration: 0.22 }, 0.64)
+            .fromTo(photos[2], { scale: 1.01 }, { scale: 1.035, duration: 0.32 }, 0.68)
+            .to(copies[2], { autoAlpha: 1, y: 0, duration: 0.12 }, 0.86);
         } else {
           root.dataset.motion = 'mobile';
           select('.visual-scene').forEach((scene: HTMLElement) => {
-            gsap.fromTo(scene.querySelector('img'), { yPercent: -2, scale: 1.05 }, {
-              yPercent: 2, ease: 'none',
+            gsap.fromTo(scene.querySelector('img'), { yPercent: -1, scale: 1.025 }, {
+              yPercent: 1, ease: 'none',
               scrollTrigger: { trigger: scene, start: 'top bottom', end: 'bottom top', scrub: 0.3 },
             });
           });

@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-const out = path.resolve('docs/institutional-preview');
+const out = path.resolve('docs/institutional-refinement-preview');
 await mkdir(out, { recursive: true });
 const profile = await mkdtemp(path.join(tmpdir(), 'fauna-cinematic-chrome-'));
 const chrome = spawn(process.env.CHROME_PATH ?? 'C:/Program Files/Google/Chrome/Application/chrome.exe', [
@@ -87,8 +87,16 @@ try {
   await waitFor(`[...document.querySelectorAll('.visual-scene img')].every(i=>i.complete && i.naturalWidth>0)`);
   check('Três imagens carregadas e íntegras',true);
   await screenshot('arrival-desktop');
+  await screenshot('header-initial');
+  const headerHeight = await evaluate("document.querySelector('header').getBoundingClientRect().height");
   const distance=await evaluate(`document.querySelector('.institutional-journey').offsetHeight-innerHeight`);
-  await scroll(distance*.48);
+  for (const progress of [.18,.24,.32,.4,.48,.6,.68,.76,.86,1,.76,.4,0]) {
+    await scroll(distance*progress);
+    const state=await evaluate(`[...document.querySelectorAll('.visual-scene')].map(scene=>({opacity:Number(getComputedStyle(scene).opacity),copy:Number(getComputedStyle(scene.querySelector('.visual-copy')).opacity),height:scene.querySelector('h1,h2').getBoundingClientRect().height}))`);
+    check('Transição sem títulos sobrepostos '+progress,state.filter(s=>s.opacity*s.copy>.12).length<=1 && state.every(s=>s.height>30),state);
+    if(progress===.32)await screenshot('transition-intermediate');
+  }
+  await scroll(distance*.5);
   check('Imersão legível',await evaluate(`Number(getComputedStyle(document.querySelector('[data-scene="immersion"]')).opacity)>.95 && Number(getComputedStyle(document.querySelector('[data-scene="immersion"] .visual-copy')).opacity)>.9`));
   check('Header com superfície opaca e contraste estável',await evaluate(`getComputedStyle(document.querySelector('header')).backgroundColor==='rgb(250, 248, 245)'`));
   await evaluate(`[...document.querySelectorAll('header nav a')].find(a=>a.textContent.trim()==='Cursos').focus()`);
@@ -97,6 +105,8 @@ try {
   await rpc('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape',code:'Escape'});
   await rpc('Input.dispatchKeyEvent',{type:'keyUp',key:'Escape',code:'Escape'});
   await screenshot('immersion-desktop');
+  await screenshot('header-scrolled');
+  check('Altura do header constante no scroll',await evaluate("document.querySelector('header').getBoundingClientRect().height")===headerHeight);
   await scroll(distance);
   check('Presença legível',await evaluate(`getComputedStyle(document.querySelector('[data-scene="presence"]')).visibility==='visible' && Number(getComputedStyle(document.querySelector('[data-scene="presence"]')).opacity)>.95`));
   await screenshot('presence-desktop');
@@ -115,7 +125,7 @@ try {
   await waitFor(`!!document.querySelector('.institutional-journey')`);
   await delay(300);
   check('Timeline recriada sem duplicação',await triggerCount()===1);
-  for(const width of [1440,768,375,430]){
+  for(const width of [1440,768,375,390,430]){
     await viewport(width);
     await scroll(0);
     const layout=await evaluate(`({width:innerWidth,scroll:document.documentElement.scrollWidth,mode:document.querySelector('.institutional-journey').dataset.motion,h1:document.querySelector('main h1').getBoundingClientRect().right})`);
@@ -125,6 +135,12 @@ try {
       await evaluate(`document.querySelector('[data-scene="presence"]').scrollIntoView({behavior:'instant',block:'start'})`);
       await delay(500);
       check(`${width}px presença em fluxo natural`,await evaluate(`getComputedStyle(document.querySelector('[data-scene="presence"]')).visibility==='visible'`));
+    }
+    if(width<768){
+      await evaluate(`document.querySelector('[data-scene="immersion"]').scrollIntoView({behavior:'instant',block:'start'})`);
+      await delay(700);
+      await screenshot('immersion-mobile-'+width);
+      check(width+'px título da imersão íntegro',await evaluate(`(() => {const h=document.querySelector('[data-scene="immersion"] h2');return h.scrollWidth<=h.clientWidth+1 && h.getBoundingClientRect().top>=72;})()`));
     }
     if(width===375){await scroll(0);await screenshot('arrival-mobile');await evaluate(`document.querySelector('#primeiro-manifesto').scrollIntoView({behavior:'instant',block:'center'})`);await screenshot('manifesto-mobile');}
   }
@@ -164,7 +180,7 @@ try {
   await evaluate(`document.querySelector('.institutional-invitation').scrollIntoView({behavior:'instant',block:'center'})`);
   check('Encerramento identificado como proposta editorial',await evaluate(`document.querySelector('.institutional-invitation').innerText.includes('Proposta editorial sujeita à validação institucional.')`));
   await screenshot('invitation-desktop');
-  for(const width of [375,430,768,1440]){
+  for(const width of [375,390,430,768,1440]){
     await viewport(width);
     for(const selector of ['.institutional-signature','.institutional-formation-intro','.course-direito','.course-enfermagem','.course-psicologia','.institutional-invitation']){
       await evaluate(`document.querySelector('${selector}').scrollIntoView({behavior:'instant',block:'center'})`);
