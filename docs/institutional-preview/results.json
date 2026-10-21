@@ -1,0 +1,429 @@
+{
+  "results": [
+    {
+      "name": "Primeira tela visual, sem marca gigante",
+      "pass": true
+    },
+    {
+      "name": "Três cenas locais identificadas como ilustração",
+      "pass": true
+    },
+    {
+      "name": "Três imagens carregadas e íntegras",
+      "pass": true
+    },
+    {
+      "name": "Imersão legível",
+      "pass": true
+    },
+    {
+      "name": "Header com superfície opaca e contraste estável",
+      "pass": true
+    },
+    {
+      "name": "Menu desktop abre durante a imersão",
+      "pass": true
+    },
+    {
+      "name": "Presença legível",
+      "pass": true
+    },
+    {
+      "name": "Retorno restaura chegada",
+      "pass": true
+    },
+    {
+      "name": "Link de descoberta alcança o manifesto",
+      "pass": true
+    },
+    {
+      "name": "Timeline única",
+      "pass": true
+    },
+    {
+      "name": "Navegação ao catálogo preservada",
+      "pass": true
+    },
+    {
+      "name": "Timeline limpa após navegação",
+      "pass": true
+    },
+    {
+      "name": "Timeline recriada sem duplicação",
+      "pass": true
+    },
+    {
+      "name": "1440px sem overflow",
+      "pass": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1432,
+        "mode": "desktop",
+        "h1": 593.25
+      }
+    },
+    {
+      "name": "768px sem overflow",
+      "pass": true,
+      "detail": {
+        "width": 768,
+        "scroll": 760,
+        "mode": "mobile",
+        "h1": 496.625
+      }
+    },
+    {
+      "name": "768px mobile sem sticky",
+      "pass": true
+    },
+    {
+      "name": "768px presença em fluxo natural",
+      "pass": true
+    },
+    {
+      "name": "375px sem overflow",
+      "pass": true,
+      "detail": {
+        "width": 375,
+        "scroll": 375,
+        "mode": "mobile",
+        "h1": 304.046875
+      }
+    },
+    {
+      "name": "375px mobile sem sticky",
+      "pass": true
+    },
+    {
+      "name": "375px presença em fluxo natural",
+      "pass": true
+    },
+    {
+      "name": "430px sem overflow",
+      "pass": true,
+      "detail": {
+        "width": 430,
+        "scroll": 430,
+        "mode": "mobile",
+        "h1": 307.890625
+      }
+    },
+    {
+      "name": "430px mobile sem sticky",
+      "pass": true
+    },
+    {
+      "name": "430px presença em fluxo natural",
+      "pass": true
+    },
+    {
+      "name": "Menu acessível durante a experiência",
+      "pass": true
+    },
+    {
+      "name": "Reduced motion sem timeline longa",
+      "pass": true
+    },
+    {
+      "name": "Reduced motion conserva todas as cenas",
+      "pass": true
+    },
+    {
+      "name": "Retorno à animação sem duplicação",
+      "pass": true
+    },
+    {
+      "name": "Rota interna preservada /cursos/direito",
+      "pass": true
+    },
+    {
+      "name": "Rota interna preservada /cursos/enfermagem",
+      "pass": true
+    },
+    {
+      "name": "Rota interna preservada /cursos/psicologia",
+      "pass": true
+    },
+    {
+      "name": "Rota interna preservada /institucional/diretoria-docentes",
+      "pass": true
+    },
+    {
+      "name": "Assinatura FAUNA após a experiência",
+      "pass": true
+    },
+    {
+      "name": "Formação sem grade convencional de cards",
+      "pass": true
+    },
+    {
+      "name": "Formação direito íntegra e com rota correta",
+      "pass": true,
+      "detail": {
+        "href": "/cursos/direito",
+        "label": "Direito",
+        "src": "/assets/cinematic/law-concept.jpg"
+      }
+    },
+    {
+      "name": "Formação enfermagem íntegra e com rota correta",
+      "pass": true,
+      "detail": {
+        "href": "/cursos/enfermagem",
+        "label": "Enfermagem",
+        "src": "/assets/cinematic/nursing-concept.jpg"
+      }
+    },
+    {
+      "name": "Formação psicologia íntegra e com rota correta",
+      "pass": true,
+      "detail": {
+        "href": "/cursos/psicologia",
+        "label": "Psicologia",
+        "src": "/assets/cinematic/psychology-concept.jpg"
+      }
+    },
+    {
+      "name": "Encerramento identificado como proposta editorial",
+      "pass": true
+    },
+    {
+      "name": "375px .institutional-signature sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 375,
+        "scroll": 375,
+        "clipped": []
+      }
+    },
+    {
+      "name": "375px .institutional-formation-intro sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 375,
+        "scroll": 375,
+        "clipped": []
+      }
+    },
+    {
+      "name": "375px .course-direito sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 375,
+        "scroll": 375,
+        "clipped": []
+      }
+    },
+    {
+      "name": "375px .course-enfermagem sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 375,
+        "scroll": 375,
+        "clipped": []
+      }
+    },
+    {
+      "name": "375px .course-psicologia sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 375,
+        "scroll": 375,
+        "clipped": []
+      }
+    },
+    {
+      "name": "375px .institutional-invitation sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 375,
+        "scroll": 375,
+        "clipped": []
+      }
+    },
+    {
+      "name": "430px .institutional-signature sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 430,
+        "scroll": 430,
+        "clipped": []
+      }
+    },
+    {
+      "name": "430px .institutional-formation-intro sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 430,
+        "scroll": 430,
+        "clipped": []
+      }
+    },
+    {
+      "name": "430px .course-direito sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 430,
+        "scroll": 430,
+        "clipped": []
+      }
+    },
+    {
+      "name": "430px .course-enfermagem sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 430,
+        "scroll": 430,
+        "clipped": []
+      }
+    },
+    {
+      "name": "430px .course-psicologia sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 430,
+        "scroll": 430,
+        "clipped": []
+      }
+    },
+    {
+      "name": "430px .institutional-invitation sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 430,
+        "scroll": 430,
+        "clipped": []
+      }
+    },
+    {
+      "name": "768px .institutional-signature sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 768,
+        "scroll": 760,
+        "clipped": []
+      }
+    },
+    {
+      "name": "768px .institutional-formation-intro sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 768,
+        "scroll": 760,
+        "clipped": []
+      }
+    },
+    {
+      "name": "768px .course-direito sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 768,
+        "scroll": 760,
+        "clipped": []
+      }
+    },
+    {
+      "name": "768px .course-enfermagem sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 768,
+        "scroll": 760,
+        "clipped": []
+      }
+    },
+    {
+      "name": "768px .course-psicologia sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 768,
+        "scroll": 760,
+        "clipped": []
+      }
+    },
+    {
+      "name": "768px .institutional-invitation sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 768,
+        "scroll": 760,
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440px .institutional-signature sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1432,
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440px .institutional-formation-intro sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1432,
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440px .course-direito sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1432,
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440px .course-enfermagem sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1432,
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440px .course-psicologia sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1432,
+        "clipped": []
+      }
+    },
+    {
+      "name": "1440px .institutional-invitation sem cortes horizontais",
+      "pass": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1432,
+        "clipped": []
+      }
+    },
+    {
+      "name": "Imagens lentas: requisições retidas",
+      "pass": true
+    },
+    {
+      "name": "Imagens lentas: título legível e espaço reservado",
+      "pass": true
+    },
+    {
+      "name": "Imagens lentas: carregam sem salto de layout",
+      "pass": true,
+      "detail": {
+        "initialHeight": 950,
+        "finalHeight": 950
+      }
+    },
+    {
+      "name": "Sem exceções JavaScript",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}
