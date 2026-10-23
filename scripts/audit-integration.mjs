@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-const out = path.resolve('docs/integration-audit-preview');
+const out = path.resolve(process.env.FAUNA_TEST_OUTPUT ?? 'docs/integration-audit-preview');
 await mkdir(out, { recursive: true });
 const profile = await mkdtemp(path.join(tmpdir(), 'fauna-cinematic-chrome-'));
 const chrome = spawn(process.env.CHROME_PATH ?? 'C:/Program Files/Google/Chrome/Application/chrome.exe', [
@@ -83,17 +83,17 @@ try {
   await navigate('/');
   await delay(400);
   check('Primeira tela visual, sem marca gigante',await evaluate(`document.querySelector('main h1').textContent==='Uma nova forma de viver o ensino superior.' && !document.querySelector('.opening-brand')`));
-  check('Três cenas locais identificadas como ilustração',await evaluate(`document.querySelectorAll('.visual-scene').length===3 && [...document.querySelectorAll('.visual-scene img')].every(i=>i.alt.includes('Ilustração conceitual'))`));
+  check('Cinco cenas com procedência identificada',await evaluate(`document.querySelectorAll('.visual-scene').length===5 && document.querySelector('[data-scene="arrival"] img').alt.includes('fotografia real') && [...document.querySelectorAll('.visual-scene img')].slice(1).every(i=>i.alt.includes('Ilustração conceitual'))`));
   await waitFor(`[...document.querySelectorAll('.visual-scene img')].every(i=>i.complete && i.naturalWidth>0)`);
-  check('Três imagens carregadas e íntegras',true);
+  check('Cinco imagens carregadas e íntegras',true);
   await screenshot('arrival-desktop');
   await screenshot('header-initial');
   const headerHeight = await evaluate("document.querySelector('header').getBoundingClientRect().height");
   const distance=await evaluate(`document.querySelector('.institutional-journey').offsetHeight-innerHeight`);
   for (const progress of [.18,.24,.32,.4,.48,.6,.68,.76,.86,1,.76,.4,0]) {
     await scroll(distance*progress);
-    const state=await evaluate(`[...document.querySelectorAll('.visual-scene')].map(scene=>({opacity:Number(getComputedStyle(scene).opacity),copy:Number(getComputedStyle(scene.querySelector('.visual-copy')).opacity),height:scene.querySelector('h1,h2').getBoundingClientRect().height}))`);
-    check('Transição sem títulos sobrepostos '+progress,state.filter(s=>s.opacity*s.copy>.12).length<=1 && state.every(s=>s.height>30),state);
+    const state=await evaluate(`[...document.querySelectorAll('.visual-scene')].map(scene=>({opacity:Number(getComputedStyle(scene).opacity),copy:Number(getComputedStyle(scene.querySelector('.visual-copy')).opacity),height:scene.querySelector('h1,h2')?.getBoundingClientRect().height ?? null}))`);
+    check('Transição sem títulos sobrepostos '+progress,state.filter(s=>s.height!==null && s.opacity*s.copy>.12).length<=1 && state.every(s=>s.height===null || s.height>30),state);
     if(progress===.32)await screenshot('transition-intermediate');
   }
   await scroll(distance*.5);
@@ -179,7 +179,7 @@ try {
     await evaluate(`document.querySelector('.course-${slug}').scrollIntoView({behavior:'instant',block:'center'})`);
     await waitFor(`document.querySelector('.course-${slug} img').complete && document.querySelector('.course-${slug} img').naturalWidth>0`);
     const course=await evaluate(`(() => {const article=document.querySelector('.course-${slug}');return{href:article.querySelector('a').getAttribute('href'),label:article.querySelector('h3').textContent,src:article.querySelector('img').getAttribute('src')};})()`);
-    check(`Formação ${slug} íntegra e com rota correta`,course.href==='/cursos/'+slug&&course.src.includes('-concept.jpg'),course);
+    check(`Formação ${slug} íntegra e com rota correta`,course.href==='/cursos/'+slug&&course.src.includes('/assets/institutional/'+slug+'-fauna.jpg'),course);
     if(slug==='direito')await screenshot('formation-desktop');
   }
   await evaluate(`document.querySelector('.institutional-invitation').scrollIntoView({behavior:'instant',block:'center'})`);

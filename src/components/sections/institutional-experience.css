@@ -5,7 +5,7 @@
 .institutional-image-error { position: absolute; inset: 0; display: grid; place-content: center; padding: 2rem; color: #faf8f5; font-size: 0.8rem; }
 .institutional-journey { position: relative; flex: none; background: #123524; }
 .visual-stage { position: relative; }
-.visual-scene { position: relative; min-height: 100svh; overflow: clip; color: #faf8f5; background: #123524; }
+.visual-scene { isolation: isolate; position: relative; min-height: 100svh; overflow: clip; color: #faf8f5; background: #123524; }
 .visual-photo { position: absolute; inset: 0; }
 .visual-shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg,rgba(6,21,14,.76) 0%,rgba(6,21,14,.40) 47%,rgba(6,21,14,.10) 100%); }
 .visual-copy { position: relative; z-index: 1; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: 8rem 8vw 7rem; width: min(100%, 62rem); }
@@ -16,7 +16,7 @@
 .visual-discover { display: inline-flex; align-items: center; gap: 1.3rem; width: fit-content; margin-top: 3rem; padding: .65rem 0; font-size: .72rem; border-bottom: 1px solid #faf8f566; }
 .visual-discover:focus-visible, .institutional-experience a:focus-visible { outline: 2px solid #c9a44c; outline-offset: 6px; }
 .visual-disclosure { position: absolute; z-index: 2; left: 8vw; bottom: 2.25rem; max-width: 34rem; margin: 0; font-size: .65rem; line-height: 1.7; color: #faf8f5; }
-.institutional-journey[data-motion="desktop"] { height: 250svh; }
+.institutional-journey[data-motion="desktop"] { height: 450svh; }
 .institutional-journey[data-motion="desktop"] .visual-stage { position: sticky; top: 0; height: 100svh; overflow: clip; }
 .institutional-journey[data-motion="desktop"] .visual-scene { position: absolute; inset: 0; }
 .institutional-manifesto { position: relative; background: #faf8f5; padding: clamp(6rem,12vw,12rem) 9vw; color: #123524; }

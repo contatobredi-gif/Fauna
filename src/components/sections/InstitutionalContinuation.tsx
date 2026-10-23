@@ -2,15 +2,15 @@ import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { BARCARENA_COURSES } from '../../data/barcarenaCourses';
-import { INSTITUTIONAL_MEDIA } from '../../data/institutionalMedia';
+import { HOMEPAGE_MEDIA } from '../../data/homepageMedia';
 import { InstitutionalImage } from '../ui/InstitutionalImage';
 import { useGSAPScene } from '../../hooks/useGSAPScene';
 import { gsap } from '../../utils/motionConfig';
 
 const courseImages = {
-  direito: INSTITUTIONAL_MEDIA.law,
-  enfermagem: INSTITUTIONAL_MEDIA.nursing,
-  psicologia: INSTITUTIONAL_MEDIA.psychology,
+  direito: HOMEPAGE_MEDIA.direito,
+  enfermagem: HOMEPAGE_MEDIA.enfermagem,
+  psicologia: HOMEPAGE_MEDIA.psicologia,
 };
 
 export function InstitutionalContinuation() {
@@ -32,8 +32,8 @@ export function InstitutionalContinuation() {
     <div ref={rootRef} className="institutional-continuation institutional-experience">
       <section className="institutional-signature" aria-labelledby="signature-title">
         <figure>
-          <InstitutionalImage media={INSTITUTIONAL_MEDIA.presence} sizes="(max-width: 899px) 100vw, 52vw" />
-          <figcaption>Imagem conceitual criada com IA · Não representa pessoas ou instalações reais da FAUNA.</figcaption>
+          <InstitutionalImage media={HOMEPAGE_MEDIA.facade} sizes="(max-width: 899px) 100vw, 52vw" />
+          <figcaption>Fachada FAUNA · Imagem editada a partir de fotografia real.</figcaption>
         </figure>
         <div className="institutional-signature-copy">
           <p className="editorial-label">Conhecimento. Proximidade. Trajetórias.</p>

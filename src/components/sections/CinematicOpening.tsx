@@ -3,7 +3,7 @@ import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { ArrowDown } from 'lucide-react';
 import { gsap } from '../../utils/motionConfig';
 import { InstitutionalImage } from '../ui/InstitutionalImage';
-import { OPENING_NARRATIVE, VISUAL_DISCLOSURE } from '../../data/institutionalMedia';
+import { OPENING_NARRATIVE } from '../../data/institutionalMedia';
 import './institutional-experience.css';
 
 export function CinematicOpening() {
@@ -31,17 +31,20 @@ export function CinematicOpening() {
               scrub: 0.45, invalidateOnRefresh: true,
             },
           });
-          timeline
-            // Dissolve the photographs first; titles never compete in the same frame.
-            .fromTo(photos[0], { scale: 1.015, transformOrigin: '65% 48%' }, { scale: 1.065, duration: 0.6 }, 0)
-            .to(copies[0], { autoAlpha: 0, y: -8, duration: 0.1 }, 0.14)
-            .to(scenes[1], { autoAlpha: 1, duration: 0.24 }, 0.2)
-            .fromTo(photos[1], { scale: 1.015, transformOrigin: '65% 48%' }, { scale: 1.055, duration: 0.48 }, 0.24)
-            .to(copies[1], { autoAlpha: 1, y: 0, duration: 0.1 }, 0.38)
-            .to(copies[1], { autoAlpha: 0, y: -8, duration: 0.08 }, 0.58)
-            .to(scenes[2], { autoAlpha: 1, duration: 0.22 }, 0.64)
-            .fromTo(photos[2], { scale: 1.01 }, { scale: 1.035, duration: 0.32 }, 0.68)
-            .to(copies[2], { autoAlpha: 1, y: 0, duration: 0.12 }, 0.86);
+          // Keep the original scrubbed camera and dissolves; extend the journey to five scenes.
+          scenes.forEach((scene: HTMLElement, index: number) => {
+            const at = index;
+            timeline.fromTo(photos[index], {
+              scale: 1.015, transformOrigin: index === 0 ? '55% 48%' : '65% 48%',
+            }, { scale: 1.065, duration: 1.2 }, at);
+            if (index > 0) {
+              timeline.to(scene, { autoAlpha: 1, duration: 0.3 }, at)
+                .to(copies[index], { autoAlpha: 1, y: 0, duration: 0.12 }, at + 0.3);
+            }
+            if (index < scenes.length - 1) {
+              timeline.to(copies[index], { autoAlpha: 0, y: -8, duration: 0.12 }, at + 0.78);
+            }
+          });
         } else {
           root.dataset.motion = 'mobile';
           select('.visual-scene').forEach((scene: HTMLElement) => {
@@ -75,15 +78,15 @@ export function CinematicOpening() {
       <section ref={rootRef} className="cinematic-opening institutional-journey" aria-label="Conheça a experiência FAUNA">
         <div className="visual-stage">
           {OPENING_NARRATIVE.map((scene, index) => (
-            <section key={scene.id} className="visual-scene" data-scene={scene.id} aria-labelledby={`scene-title-${scene.id}`}>
+            <section key={scene.id} className="visual-scene" data-scene={scene.id} aria-labelledby={scene.title ? `scene-title-${scene.id}` : undefined} aria-label={scene.title ? undefined : scene.media.purpose}>
               <InstitutionalImage media={scene.media} priority={index === 0} eager className="visual-photo" />
               <div className="visual-shade" aria-hidden="true" />
               <div className="visual-copy">
-                {index === 0 ? <h1 id={`scene-title-${scene.id}`}>{scene.title}</h1> : <h2 id={`scene-title-${scene.id}`}>{scene.title}</h2>}
+                {scene.title && (index === 0 ? <h1 id={`scene-title-${scene.id}`}>{scene.title}</h1> : <h2 id={`scene-title-${scene.id}`}>{scene.title}</h2>)}
                 {scene.signature && <p className={index === 0 ? 'visual-brand-signature' : 'visual-scene-subtitle'}>{scene.signature}</p>}
                 {index === 0 && <a className="visual-discover" href="#primeiro-manifesto" onClick={discover}>Conheça a experiência <ArrowDown size={16} strokeWidth={1.25} aria-hidden="true" /></a>}
               </div>
-              <p className="visual-disclosure">{VISUAL_DISCLOSURE}</p>
+              <p className="visual-disclosure">{scene.disclosure}</p>
             </section>
           ))}
         </div>
