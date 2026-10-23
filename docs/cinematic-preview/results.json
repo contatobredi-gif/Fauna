@@ -1,0 +1,176 @@
+{
+  "results": [
+    {
+      "name": "Desktop usa sequência sticky",
+      "pass": true
+    },
+    {
+      "name": "H1 único e identidade preservada",
+      "pass": true
+    },
+    {
+      "name": "Abertura sem imagens ou vídeo presumidos",
+      "pass": true
+    },
+    {
+      "name": "Manifesto legível ao completar a transição",
+      "pass": true,
+      "detail": {
+        "opacity": "1",
+        "visibility": "visible",
+        "title": "Muito mais que uma faculdade.",
+        "details": "1"
+      }
+    },
+    {
+      "name": "Retorno da rolagem restaura a marca",
+      "pass": true,
+      "detail": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    {
+      "name": "Link de descoberta chega ao manifesto",
+      "pass": true
+    },
+    {
+      "name": "Link de descoberta move o foco para o manifesto",
+      "pass": true
+    },
+    {
+      "name": "Continuidade sem margem negativa ou sobreposição",
+      "pass": true
+    },
+    {
+      "name": "Uma timeline da abertura ativa",
+      "pass": true
+    },
+    {
+      "name": "Página de cursos preservada",
+      "pass": true
+    },
+    {
+      "name": "Timeline desmontada ao navegar",
+      "pass": true
+    },
+    {
+      "name": "Timeline recriada sem duplicação",
+      "pass": true
+    },
+    {
+      "name": "375px sem overflow na marca",
+      "pass": true,
+      "detail": {
+        "width": 375,
+        "scroll": 375,
+        "left": 22.5,
+        "right": 332.78125,
+        "mode": "mobile"
+      }
+    },
+    {
+      "name": "375px sem sticky no mobile",
+      "pass": true
+    },
+    {
+      "name": "375px manifesto legível",
+      "pass": true
+    },
+    {
+      "name": "430px sem overflow na marca",
+      "pass": true,
+      "detail": {
+        "width": 430,
+        "scroll": 430,
+        "left": 25.796875,
+        "right": 381.59375,
+        "mode": "mobile"
+      }
+    },
+    {
+      "name": "430px sem sticky no mobile",
+      "pass": true
+    },
+    {
+      "name": "430px manifesto legível",
+      "pass": true
+    },
+    {
+      "name": "768px sem overflow na marca",
+      "pass": true,
+      "detail": {
+        "width": 768,
+        "scroll": 760,
+        "left": 46.078125,
+        "right": 681.53125,
+        "mode": "mobile"
+      }
+    },
+    {
+      "name": "768px sem sticky no mobile",
+      "pass": true
+    },
+    {
+      "name": "768px manifesto legível",
+      "pass": true
+    },
+    {
+      "name": "1024px sem overflow na marca",
+      "pass": true,
+      "detail": {
+        "width": 1024,
+        "scroll": 1016,
+        "left": 61.4375,
+        "right": 908.703125,
+        "mode": "desktop"
+      }
+    },
+    {
+      "name": "1440px sem overflow na marca",
+      "pass": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1432,
+        "left": 86.390625,
+        "right": 1277.859375,
+        "mode": "desktop"
+      }
+    },
+    {
+      "name": "Menu mobile continua acessível",
+      "pass": true
+    },
+    {
+      "name": "Reduced motion: fluxo estático sem timeline",
+      "pass": true
+    },
+    {
+      "name": "Reduced motion: marca e manifesto disponíveis",
+      "pass": true
+    },
+    {
+      "name": "Retorno do movimento sem duplicação",
+      "pass": true
+    },
+    {
+      "name": "Rota interna preservada /cursos/direito",
+      "pass": true
+    },
+    {
+      "name": "Rota interna preservada /cursos/enfermagem",
+      "pass": true
+    },
+    {
+      "name": "Rota interna preservada /cursos/psicologia",
+      "pass": true
+    },
+    {
+      "name": "Rota interna preservada /institucional/diretoria-docentes",
+      "pass": true
+    },
+    {
+      "name": "Sem exceções JavaScript",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}
